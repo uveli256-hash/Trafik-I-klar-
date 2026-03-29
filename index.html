@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Trafik Işığı Takip</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0f0f1a;
+      --card: #1e1e32;
+      --accent: #e63946;
+      --text: #f0f0f0;
+      --sub: #aaa;
+      --green: #06d6a0;
+      --yellow: #ffd166;
+      --red: #ef233c;
+      --border: #2e2e4a;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 20px 16px 16px;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text);
+    }
+    .header p { font-size: 0.78rem; color: var(--sub); margin-top: 3px; }
+    .header-actions {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .btn-settings {
+      background: var(--border);
+      border: none;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    /* ===== PAGES ===== */
+    .page { display: none; padding: 20px 16px; }
+    .page.active { display: block; }
+
+    /* ===== HOME PAGE ===== */
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .location-btn {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .location-btn:active { transform: scale(0.96); }
+    .location-btn:hover { border-color: var(--accent); box-shadow: 0 0 14px rgba(230,57,70,0.25); }
+    .location-btn .loc-icon { font-size: 2rem; margin-bottom: 8px; }
+    .location-btn .loc-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .location-btn .loc-status {
+      font-size: 0.7rem;
+      color: var(--sub);
+      margin-top: 4px;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: var(--sub);
+      vertical-align: middle;
+    }
+    .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+    /* ===== DETAIL PAGE ===== */
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .btn-back {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-title { font-size: 1.3rem; font-weight: 700; }
+
+    .location-photo {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--sub);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .location-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .location-photo-placeholder {
+      width: 100%; height: 180px;
+      background: var(--card);
+      border: 1.5px dashed var(--border);
+      border-radius: 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--sub);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      gap: 6px;
+    }
+    .location-photo-placeholder span { font-size: 2rem; }
+
+    /* Traffic Light */
+    .traffic-light-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .traffic-light {
+      background: #111;
+      border: 3px solid #333;
+      border-radius: 24px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .traffic-light::before {
+      content: '';
+      position: absolute;
+      top: -16px; left: 50%; transform: translateX(-50%);
+      width: 12px; height: 16px;
+      background: #333;
+      border-radius: 4px 4px 0 0;
+    }
+    .light {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      position: relative;
+      transition: box-shadow 0.3s, filter 0.3s;
+    }
+    .light.red-light   { background: #3a0000; }
+    .light.yellow-light { background: #3a2e00; }
+    .light.green-light  { background: #003a1a; }
+    .light.red-light.on {
+      background: var(--red);
+      box-shadow: 0 0 20px 8px rgba(239,35,60,0.7), inset 0 0 10px rgba(255,255,255,0.2);
+      filter: brightness(1.1);
+    }
+    .light.yellow-light.on {
+      background: var(--yellow);
+      box-shadow: 0 0 20px 8px rgba(255,209,102,0.7), inset 0 0 10px rgba(255,255,255,0.2);
+      filter: brightness(1.1);
+    }
+    .light.green-light.on {
+      background: var(--green);
+      box-shadow: 0 0 20px 8px rgba(6,214,160,0.7), inset 0 0 10px rgba(255,255,255,0.2);
+      filter: brightness(1.1);
+    }
+
+    /* Timer */
+    .timer-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .timer-phase {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--sub);
+      margin-bottom: 8px;
+    }
+    .timer-display {
+      font-size: 3.5rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .timer-display.red-color   { color: var(--red); text-shadow: 0 0 20px rgba(239,35,60,0.5); }
+    .timer-display.yellow-color { color: var(--yellow); text-shadow: 0 0 20px rgba(255,209,102,0.5); }
+    .timer-display.green-color  { color: var(--green); text-shadow: 0 0 20px rgba(6,214,160,0.5); }
+
+    .timer-bar-wrap {
+      background: #111;
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .timer-bar {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.9s linear;
+    }
+    .timer-bar.red-bar    { background: linear-gradient(90deg, #b00020, var(--red)); }
+    .timer-bar.yellow-bar { background: linear-gradient(90deg, #c8a000, var(--yellow)); }
+    .timer-bar.green-bar  { background: linear-gradient(90deg, #008060, var(--green)); }
+
+    .phase-info {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 14px;
+      gap: 8px;
+    }
+    .phase-chip {
+      background: #111;
+      border-radius: 12px;
+      padding: 8px 12px;
+      text-align: center;
+      flex: 1;
+    }
+    .phase-chip .chip-label { font-size: 0.65rem; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
+    .phase-chip .chip-val   { font-size: 1rem; font-weight: 700; margin-top: 2px; }
+
+    .btn-control {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: transform 0.1s, opacity 0.2s;
+      margin-bottom: 8px;
+    }
+    .btn-control:active { transform: scale(0.97); }
+    .btn-start  { background: var(--green); color: #000; }
+    .btn-stop   { background: var(--red);   color: #fff; }
+    .btn-reset  { background: var(--card);  color: var(--text); border: 1.5px solid var(--border); }
+
+    /* ===== SETTINGS PAGE ===== */
+    .settings-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .settings-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .settings-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      cursor: pointer;
+      background: #1e1e32;
+    }
+    .settings-card-header .sname { font-weight: 600; font-size: 0.95rem; }
+    .settings-card-header .sarrow { color: var(--sub); transition: transform 0.2s; }
+    .settings-card-header.open .sarrow { transform: rotate(90deg); }
+    .settings-card-body {
+      display: none;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      gap: 12px;
+      flex-direction: column;
+    }
+    .settings-card-body.open { display: flex; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.8rem; color: var(--sub); }
+    .form-group input[type="number"] {
+      background: #111;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .form-group input[type="number"]:focus { border-color: var(--accent); }
+
+    .photo-upload-area {
+      background: #111;
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--sub);
+      font-size: 0.85rem;
+      transition: border-color 0.2s;
+    }
+    .photo-upload-area:hover { border-color: var(--accent); }
+    .photo-upload-area .upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
+    .photo-preview {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .btn-save-loc {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .btn-save-loc:active { opacity: 0.85; }
+
+    .toast {
+      position: fixed;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #06d6a0;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: transform 0.3s;
+      z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Trafik Işığı Takip</h1>
+  <p>Konum seçin</p>
+  <div class="header-actions">
+    <button class="btn-settings" onclick="showPage('settings')">⚙️</button>
+  </div>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="location-grid" id="location-grid"></div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div class="page" id="page-detail">
+  <div class="detail-header">
+    <button class="btn-back" onclick="backToHome()">←</button>
+    <div class="detail-title" id="detail-title"></div>
+  </div>
+  <div id="detail-photo-area"></div>
+  <div class="traffic-light-container">
+    <div class="traffic-light">
+      <div class="light red-light"    id="light-red"></div>
+      <div class="light yellow-light" id="light-yellow"></div>
+      <div class="light green-light"  id="light-green"></div>
+    </div>
+  </div>
+  <div class="timer-card">
+    <div class="timer-phase" id="timer-phase">HAZIR</div>
+    <div class="timer-display" id="timer-display">--</div>
+    <div class="timer-bar-wrap">
+      <div class="timer-bar" id="timer-bar" style="width:0%"></div>
+    </div>
+    <div class="phase-info">
+      <div class="phase-chip">
+        <div class="chip-label">Kırmızı</div>
+        <div class="chip-val" id="chip-red" style="color:var(--red)">-</div>
+      </div>
+      <div class="phase-chip">
+        <div class="chip-label">Sarı</div>
+        <div class="chip-val" id="chip-yellow" style="color:var(--yellow)">-</div>
+      </div>
+      <div class="phase-chip">
+        <div class="chip-label">Yeşil</div>
+        <div class="chip-val" id="chip-green" style="color:var(--green)">-</div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-control btn-start" id="btn-start" onclick="startTimer()">BAŞLAT</button>
+  <button class="btn-control btn-stop"  id="btn-stop"  onclick="stopTimer()" style="display:none">DURDUR</button>
+  <button class="btn-control btn-reset" onclick="resetTimer()">SIFIRLA</button>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page" id="page-settings">
+  <div class="detail-header">
+    <button class="btn-back" onclick="showPage('home')">←</button>
+    <div class="detail-title">Ayarlar</div>
+  </div>
+  <div class="settings-title">Konum Süreleri &amp; Fotoğraflar</div>
+  <div id="settings-list"></div>
+</div>
+
+<div class="toast" id="toast">Kaydedildi!</div>
+
+<script>
+const DEFAULT_LOCATIONS = [
+  { id: 'baglar',       name: 'Bağlar',       red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'byoncali1',    name: 'B.Yoncalı 1',  red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'yenikoy1',     name: 'Yeniköy 1',    red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'yenikoy2',     name: 'Yeniköy 2',    red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'yenikoy3',     name: 'Yeniköy 3',    red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'kapakli',      name: 'Kapaklı Camii',red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'cerkez1',      name: 'Çerkez 1',     red: 60, yellow: 3, green: 45, photo: null },
+  { id: 'cerkez2',      name: 'Çerkez 2',     red: 60, yellow: 3, green: 45, photo: null },
+];
+
+function loadLocations() {
+  const saved = localStorage.getItem('trafikLocations');
+  if (saved) return JSON.parse(saved);
+  return DEFAULT_LOCATIONS.map(l => ({...l}));
+}
+function saveLocations(locs) {
+  localStorage.setItem('trafikLocations', JSON.stringify(locs));
+}
+
+let locations = loadLocations();
+let currentLoc = null;
+let timerInterval = null;
+let currentPhase = 'red';
+let currentSec = 0;
+let totalSec = 0;
+let running = false;
+
+// ===== HOME =====
+function renderHome() {
+  const grid = document.getElementById('location-grid');
+  grid.innerHTML = '';
+  locations.forEach(loc => {
+    const div = document.createElement('div');
+    div.className = 'location-btn';
+    div.innerHTML = `
+      <div class="loc-icon">🚦</div>
+      <div class="loc-name">${loc.name}</div>
+      <div class="loc-status">
+        <span class="status-dot red"></span>
+        <span style="color:var(--red)">${loc.red}sn</span>
+        &nbsp;
+        <span class="status-dot yellow"></span>
+        <span style="color:var(--yellow)">${loc.yellow}sn</span>
+        &nbsp;
+        <span class="status-dot green"></span>
+        <span style="color:var(--green)">${loc.green}sn</span>
+      </div>`;
+    div.onclick = () => openDetail(loc.id);
+    grid.appendChild(div);
+  });
+}
+
+// ===== DETAIL =====
+function openDetail(id) {
+  currentLoc = locations.find(l => l.id === id);
+  stopTimer();
+  resetTimer();
+
+  document.getElementById('detail-title').textContent = currentLoc.name;
+
+  const photoArea = document.getElementById('detail-photo-area');
+  if (currentLoc.photo) {
+    photoArea.innerHTML = `<div class="location-photo"><img src="${currentLoc.photo}" alt="${currentLoc.name}"></div>`;
+  } else {
+    photoArea.innerHTML = `<div class="location-photo-placeholder"><span>📷</span><span>Fotoğraf henüz eklenmedi</span><span style="font-size:0.75rem">Ayarlardan ekleyebilirsiniz</span></div>`;
+  }
+
+  document.getElementById('chip-red').textContent    = currentLoc.red + 'sn';
+  document.getElementById('chip-yellow').textContent = currentLoc.yellow + 'sn';
+  document.getElementById('chip-green').textContent  = currentLoc.green + 'sn';
+
+  showPage('detail');
+}
+
+function backToHome() {
+  stopTimer();
+  showPage('home');
+}
+
+// ===== TIMER =====
+function setPhaseUI(phase, sec, total) {
+  const display  = document.getElementById('timer-display');
+  const phaseEl  = document.getElementById('timer-phase');
+  const bar      = document.getElementById('timer-bar');
+  const lr = document.getElementById('light-red');
+  const ly = document.getElementById('light-yellow');
+  const lg = document.getElementById('light-green');
+
+  lr.classList.remove('on');
+  ly.classList.remove('on');
+  lg.classList.remove('on');
+  display.className = 'timer-display';
+  bar.className = 'timer-bar';
+
+  const pct = total > 0 ? ((total - sec) / total * 100) : 0;
+  bar.style.width = pct + '%';
+
+  if (phase === 'red') {
+    lr.classList.add('on');
+    display.classList.add('red-color');
+    bar.classList.add('red-bar');
+    phaseEl.textContent = 'KIRMIZI IŞIK';
+  } else if (phase === 'yellow') {
+    ly.classList.add('on');
+    display.classList.add('yellow-color');
+    bar.classList.add('yellow-bar');
+    phaseEl.textContent = 'SARI IŞIK';
+  } else {
+    lg.classList.add('on');
+    display.classList.add('green-color');
+    bar.classList.add('green-bar');
+    phaseEl.textContent = 'YEŞİL IŞIK';
+  }
+  display.textContent = sec;
+}
+
+function startTimer() {
+  if (!currentLoc) return;
+  if (running) return;
+  running = true;
+
+  document.getElementById('btn-start').style.display = 'none';
+  document.getElementById('btn-stop').style.display  = 'block';
+
+  if (currentSec === 0) {
+    currentPhase = 'red';
+    currentSec   = currentLoc.red;
+    totalSec     = currentLoc.red;
+  }
+
+  setPhaseUI(currentPhase, currentSec, totalSec);
+
+  timerInterval = setInterval(() => {
+    currentSec--;
+    if (currentSec < 0) {
+      if      (currentPhase === 'red')    { currentPhase = 'yellow'; currentSec = currentLoc.yellow; totalSec = currentLoc.yellow; }
+      else if (currentPhase === 'yellow') { currentPhase = 'green';  currentSec = currentLoc.green;  totalSec = currentLoc.green; }
+      else                                { currentPhase = 'red';    currentSec = currentLoc.red;    totalSec = currentLoc.red; }
+    }
+    setPhaseUI(currentPhase, currentSec, totalSec);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  running = false;
+  document.getElementById('btn-start').style.display = 'block';
+  document.getElementById('btn-stop').style.display  = 'none';
+}
+
+function resetTimer() {
+  stopTimer();
+  currentPhase = 'red';
+  currentSec   = 0;
+  totalSec     = 0;
+  document.getElementById('timer-display').textContent = '--';
+  document.getElementById('timer-display').className   = 'timer-display';
+  document.getElementById('timer-phase').textContent   = 'HAZIR';
+  document.getElementById('timer-bar').style.width     = '0%';
+  document.getElementById('timer-bar').className       = 'timer-bar';
+  ['light-red','light-yellow','light-green'].forEach(id => document.getElementById(id).classList.remove('on'));
+}
+
+// ===== SETTINGS =====
+function renderSettings() {
+  const list = document.getElementById('settings-list');
+  list.innerHTML = '';
+  locations.forEach(loc => {
+    const card = document.createElement('div');
+    card.className = 'settings-card';
+    const headerId = 'sh-' + loc.id;
+    const bodyId   = 'sb-' + loc.id;
+    card.innerHTML = `
+      <div class="settings-card-header" id="${headerId}" onclick="toggleSettingsCard('${loc.id}')">
+        <span class="sname">🚦 ${loc.name}</span>
+        <span class="sarrow">›</span>
+      </div>
+      <div class="settings-card-body" id="${bodyId}">
+        <div class="form-group">
+          <label>Kırmızı Işık Süresi (saniye)</label>
+          <input type="number" id="inp-red-${loc.id}"    value="${loc.red}"    min="1" max="999" />
+        </div>
+        <div class="form-group">
+          <label>Sarı Işık Süresi (saniye)</label>
+          <input type="number" id="inp-yellow-${loc.id}" value="${loc.yellow}" min="1" max="999" />
+        </div>
+        <div class="form-group">
+          <label>Yeşil Işık Süresi (saniye)</label>
+          <input type="number" id="inp-green-${loc.id}"  value="${loc.green}"  min="1" max="999" />
+        </div>
+        <div class="form-group">
+          <label>Konum Fotoğrafı</label>
+          <div class="photo-upload-area" onclick="document.getElementById('file-${loc.id}').click()">
+            <div class="upload-icon">📷</div>
+            <div>Fotoğraf seç veya değiştir</div>
+            <input type="file" id="file-${loc.id}" accept="image/*" onchange="handlePhoto('${loc.id}', this)" />
+          </div>
+          <img id="prev-${loc.id}" class="photo-preview" src="${loc.photo || ''}" style="display:${loc.photo ? 'block' : 'none'}" />
+        </div>
+        <button class="btn-save-loc" onclick="saveLoc('${loc.id}')">Kaydet</button>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function toggleSettingsCard(id) {
+  const header = document.getElementById('sh-' + id);
+  const body   = document.getElementById('sb-' + id);
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function handlePhoto(id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('prev-' + id);
+    prev.src   = e.target.result;
+    prev.style.display = 'block';
+    prev.dataset.data  = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveLoc(id) {
+  const loc = locations.find(l => l.id === id);
+  loc.red    = parseInt(document.getElementById('inp-red-'    + id).value)    || loc.red;
+  loc.yellow = parseInt(document.getElementById('inp-yellow-' + id).value)    || loc.yellow;
+  loc.green  = parseInt(document.getElementById('inp-green-'  + id).value)    || loc.green;
+  const prev = document.getElementById('prev-' + id);
+  if (prev.dataset.data) loc.photo = prev.dataset.data;
+  saveLocations(locations);
+  showToast('Kaydedildi! ✓');
+  renderHome();
+}
+
+// ===== PAGES =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'home')     renderHome();
+  if (name === 'settings') renderSettings();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== INIT =====
+renderHome();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
