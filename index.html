@@ -3,712 +3,576 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Trafik Işığı Takip</title>
+  <title>Trafik IÅŸÄ±ÄŸÄ± Takip</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="theme-color" content="#0f0f1a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     :root {
-      --bg: #0f0f1a;
-      --card: #1e1e32;
-      --accent: #e63946;
-      --text: #f0f0f0;
-      --sub: #aaa;
-      --green: #06d6a0;
-      --yellow: #ffd166;
-      --red: #ef233c;
-      --border: #2e2e4a;
+      --bg:#0f0f1a; --card:#1e1e32; --border:#2e2e4a;
+      --text:#f0f0f0; --sub:#888;
+      --red:#ef233c; --yellow:#ffd166; --green:#06d6a0;
     }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-    /* ===== HEADER ===== */
+    /* HEADER */
     .header {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      padding: 20px 16px 16px;
-      text-align: center;
-      border-bottom: 2px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background:linear-gradient(135deg,#1a1a2e,#16213e);
+      padding:18px 16px 14px;
+      text-align:center;
+      border-bottom:1.5px solid var(--border);
+      position:sticky; top:0; z-index:100;
     }
-    .header h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--text);
-    }
-    .header p { font-size: 0.78rem; color: var(--sub); margin-top: 3px; }
-    .header-actions {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    .btn-settings {
-      background: var(--border);
-      border: none;
-      color: var(--text);
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1.2rem;
+    .header h1 { font-size:1.2rem; font-weight:700; letter-spacing:1px; }
+    .header p  { font-size:0.72rem; color:var(--sub); margin-top:2px; }
+    .header-right { position:absolute; right:14px; top:50%; transform:translateY(-50%); display:flex; gap:8px; }
+    .icon-btn {
+      background:var(--border); border:none; color:var(--text);
+      width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:1rem;
+      display:flex; align-items:center; justify-content:center;
     }
 
-    /* ===== PAGES ===== */
-    .page { display: none; padding: 20px 16px; }
-    .page.active { display: block; }
+    /* PAGES */
+    .page { display:none; padding:16px; }
+    .page.active { display:block; }
 
-    /* ===== HOME PAGE ===== */
-    .location-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 8px;
+    /* HOME */
+    .home-subtitle { font-size:0.75rem; color:var(--sub); margin-bottom:12px; text-align:center; }
+    .loc-card {
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:16px; padding:14px 16px; margin-bottom:12px;
+      cursor:pointer; transition:border-color 0.15s, transform 0.1s;
+      display:flex; align-items:center; gap:14px;
     }
-    .location-btn {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-    .location-btn:active { transform: scale(0.96); }
-    .location-btn:hover { border-color: var(--accent); box-shadow: 0 0 14px rgba(230,57,70,0.25); }
-    .location-btn .loc-icon { font-size: 2rem; margin-bottom: 8px; }
-    .location-btn .loc-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-    .location-btn .loc-status {
-      font-size: 0.7rem;
-      color: var(--sub);
-      margin-top: 4px;
-    }
-    .status-dot {
-      display: inline-block;
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      margin-right: 4px;
-      background: var(--sub);
-      vertical-align: middle;
-    }
-    .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
-    .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-    .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .loc-card:active { transform:scale(0.98); }
+    .loc-card.synced { border-color:rgba(6,214,160,0.3); }
+    .loc-card.not-synced { border-color:rgba(255,209,102,0.2); }
 
-    /* ===== DETAIL PAGE ===== */
-    .detail-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
+    .loc-light-icon {
+      width:44px; height:44px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; flex-shrink:0;
     }
-    .btn-back {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      color: var(--text);
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .detail-title { font-size: 1.3rem; font-weight: 700; }
+    .loc-light-icon.red    { background:rgba(239,35,60,0.15);  box-shadow:0 0 10px rgba(239,35,60,0.3); }
+    .loc-light-icon.yellow { background:rgba(255,209,102,0.15); box-shadow:0 0 10px rgba(255,209,102,0.3); }
+    .loc-light-icon.green  { background:rgba(6,214,160,0.15);  box-shadow:0 0 10px rgba(6,214,160,0.3); }
+    .loc-light-icon.none   { background:rgba(100,100,100,0.15); }
 
-    .location-photo {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 16px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--sub);
-      font-size: 0.85rem;
-      margin-bottom: 24px;
-      overflow: hidden;
+    .loc-info { flex:1; min-width:0; }
+    .loc-name { font-weight:700; font-size:0.95rem; }
+    .loc-phase {
+      font-size:0.78rem; margin-top:3px;
+      display:flex; align-items:center; gap:6px;
     }
-    .location-photo img {
-      width: 100%; height: 100%; object-fit: cover;
+    .phase-badge {
+      padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700;
     }
-    .location-photo-placeholder {
-      width: 100%; height: 180px;
-      background: var(--card);
-      border: 1.5px dashed var(--border);
-      border-radius: 16px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--sub);
-      font-size: 0.85rem;
-      margin-bottom: 24px;
-      gap: 6px;
-    }
-    .location-photo-placeholder span { font-size: 2rem; }
+    .phase-badge.red    { background:rgba(239,35,60,0.2);   color:var(--red); }
+    .phase-badge.yellow { background:rgba(255,209,102,0.2); color:var(--yellow); }
+    .phase-badge.green  { background:rgba(6,214,160,0.2);   color:var(--green); }
+    .phase-badge.none   { background:rgba(100,100,100,0.2); color:var(--sub); }
 
-    /* Traffic Light */
-    .traffic-light-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .traffic-light {
-      background: #111;
-      border: 3px solid #333;
-      border-radius: 24px;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.4);
-      position: relative;
-    }
-    .traffic-light::before {
-      content: '';
-      position: absolute;
-      top: -16px; left: 50%; transform: translateX(-50%);
-      width: 12px; height: 16px;
-      background: #333;
-      border-radius: 4px 4px 0 0;
-    }
-    .light {
-      width: 70px; height: 70px;
-      border-radius: 50%;
-      position: relative;
-      transition: box-shadow 0.3s, filter 0.3s;
-    }
-    .light.red-light   { background: #3a0000; }
-    .light.yellow-light { background: #3a2e00; }
-    .light.green-light  { background: #003a1a; }
-    .light.red-light.on {
-      background: var(--red);
-      box-shadow: 0 0 20px 8px rgba(239,35,60,0.7), inset 0 0 10px rgba(255,255,255,0.2);
-      filter: brightness(1.1);
-    }
-    .light.yellow-light.on {
-      background: var(--yellow);
-      box-shadow: 0 0 20px 8px rgba(255,209,102,0.7), inset 0 0 10px rgba(255,255,255,0.2);
-      filter: brightness(1.1);
-    }
-    .light.green-light.on {
-      background: var(--green);
-      box-shadow: 0 0 20px 8px rgba(6,214,160,0.7), inset 0 0 10px rgba(255,255,255,0.2);
-      filter: brightness(1.1);
-    }
+    .loc-green-info { font-size:0.72rem; color:var(--sub); margin-top:2px; }
+    .loc-green-info span { color:var(--green); font-weight:600; }
 
-    /* Timer */
-    .timer-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .timer-phase {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--sub);
-      margin-bottom: 8px;
-    }
-    .timer-display {
-      font-size: 3.5rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .timer-display.red-color   { color: var(--red); text-shadow: 0 0 20px rgba(239,35,60,0.5); }
-    .timer-display.yellow-color { color: var(--yellow); text-shadow: 0 0 20px rgba(255,209,102,0.5); }
-    .timer-display.green-color  { color: var(--green); text-shadow: 0 0 20px rgba(6,214,160,0.5); }
+    .loc-arrow { color:var(--sub); font-size:1.1rem; }
 
-    .timer-bar-wrap {
-      background: #111;
-      border-radius: 10px;
-      height: 8px;
-      overflow: hidden;
-      margin-top: 10px;
+    /* DETAIL */
+    .back-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+    .back-btn {
+      background:var(--card); border:1.5px solid var(--border);
+      color:var(--text); width:38px; height:38px; border-radius:11px;
+      cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
     }
-    .timer-bar {
-      height: 100%;
-      border-radius: 10px;
-      transition: width 0.9s linear;
-    }
-    .timer-bar.red-bar    { background: linear-gradient(90deg, #b00020, var(--red)); }
-    .timer-bar.yellow-bar { background: linear-gradient(90deg, #c8a000, var(--yellow)); }
-    .timer-bar.green-bar  { background: linear-gradient(90deg, #008060, var(--green)); }
+    .detail-name { font-size:1.2rem; font-weight:700; }
 
-    .phase-info {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 14px;
-      gap: 8px;
+    .photo-box {
+      width:100%; height:160px; border-radius:14px; overflow:hidden;
+      background:var(--card); border:1.5px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--sub); font-size:0.8rem; margin-bottom:18px;
+      flex-direction:column; gap:6px;
     }
-    .phase-chip {
-      background: #111;
-      border-radius: 12px;
-      padding: 8px 12px;
-      text-align: center;
-      flex: 1;
-    }
-    .phase-chip .chip-label { font-size: 0.65rem; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
-    .phase-chip .chip-val   { font-size: 1rem; font-weight: 700; margin-top: 2px; }
+    .photo-box img { width:100%; height:100%; object-fit:cover; }
+    .photo-box .photo-icon { font-size:2rem; }
 
-    .btn-control {
-      width: 100%;
-      padding: 16px;
-      border-radius: 16px;
-      border: none;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: transform 0.1s, opacity 0.2s;
-      margin-bottom: 8px;
+    /* Big traffic light */
+    .tl-wrap { display:flex; justify-content:center; margin-bottom:20px; }
+    .tl-body {
+      background:#111; border:3px solid #2a2a2a; border-radius:22px;
+      padding:14px 18px; display:flex; flex-direction:column; gap:12px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.6);
     }
-    .btn-control:active { transform: scale(0.97); }
-    .btn-start  { background: var(--green); color: #000; }
-    .btn-stop   { background: var(--red);   color: #fff; }
-    .btn-reset  { background: var(--card);  color: var(--text); border: 1.5px solid var(--border); }
+    .tl-light {
+      width:64px; height:64px; border-radius:50%;
+      transition:box-shadow 0.4s, background 0.4s;
+    }
+    .tl-light.r-off { background:#2a0008; }
+    .tl-light.y-off { background:#2a2000; }
+    .tl-light.g-off { background:#002a14; }
+    .tl-light.r-on  { background:var(--red);    box-shadow:0 0 24px 8px rgba(239,35,60,0.65); }
+    .tl-light.y-on  { background:var(--yellow);  box-shadow:0 0 24px 8px rgba(255,209,102,0.65); }
+    .tl-light.g-on  { background:var(--green);   box-shadow:0 0 24px 8px rgba(6,214,160,0.65); }
 
-    /* ===== SETTINGS PAGE ===== */
-    .settings-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 16px;
+    /* Main timer card */
+    .main-card {
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:18px; padding:18px; margin-bottom:14px; text-align:center;
     }
-    .settings-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 16px;
-      margin-bottom: 14px;
-      overflow: hidden;
+    .phase-label {
+      font-size:0.72rem; text-transform:uppercase; letter-spacing:2px;
+      color:var(--sub); margin-bottom:6px;
     }
-    .settings-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      cursor: pointer;
-      background: #1e1e32;
+    .big-timer {
+      font-size:4rem; font-weight:800; font-variant-numeric:tabular-nums; line-height:1;
+      margin-bottom:6px;
     }
-    .settings-card-header .sname { font-weight: 600; font-size: 0.95rem; }
-    .settings-card-header .sarrow { color: var(--sub); transition: transform 0.2s; }
-    .settings-card-header.open .sarrow { transform: rotate(90deg); }
-    .settings-card-body {
-      display: none;
-      padding: 16px;
-      border-top: 1px solid var(--border);
-      gap: 12px;
-      flex-direction: column;
-    }
-    .settings-card-body.open { display: flex; }
+    .big-timer.rc { color:var(--red);    text-shadow:0 0 20px rgba(239,35,60,0.4); }
+    .big-timer.yc { color:var(--yellow); text-shadow:0 0 20px rgba(255,209,102,0.4); }
+    .big-timer.gc { color:var(--green);  text-shadow:0 0 20px rgba(6,214,160,0.4); }
+    .big-timer.nc { color:var(--sub); }
 
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.8rem; color: var(--sub); }
-    .form-group input[type="number"] {
-      background: #111;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 1rem;
-      outline: none;
-      -webkit-appearance: none;
-    }
-    .form-group input[type="number"]:focus { border-color: var(--accent); }
+    .prog-wrap { background:#111; border-radius:8px; height:7px; overflow:hidden; margin-top:10px; }
+    .prog-bar  { height:100%; border-radius:8px; transition:width 0.9s linear; }
+    .prog-bar.rb { background:linear-gradient(90deg,#800020,var(--red)); }
+    .prog-bar.yb { background:linear-gradient(90deg,#806000,var(--yellow)); }
+    .prog-bar.gb { background:linear-gradient(90deg,#006040,var(--green)); }
 
-    .photo-upload-area {
-      background: #111;
-      border: 1.5px dashed var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      color: var(--sub);
-      font-size: 0.85rem;
-      transition: border-color 0.2s;
+    .green-eta {
+      margin-top:12px; font-size:0.82rem; color:var(--sub);
     }
-    .photo-upload-area:hover { border-color: var(--accent); }
-    .photo-upload-area .upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
-    .photo-preview {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-top: 10px;
-      display: none;
-    }
+    .green-eta b { color:var(--green); font-size:1rem; }
 
-    .btn-save-loc {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 4px;
+    .chips { display:flex; gap:8px; margin-top:12px; }
+    .chip  {
+      flex:1; background:#111; border-radius:12px; padding:8px;
+      text-align:center;
     }
-    .btn-save-loc:active { opacity: 0.85; }
+    .chip .cl { font-size:0.6rem; color:var(--sub); text-transform:uppercase; letter-spacing:1px; }
+    .chip .cv { font-size:0.95rem; font-weight:700; margin-top:2px; }
+
+    /* SYNC section */
+    .sync-card {
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:18px; padding:16px; margin-bottom:14px;
+    }
+    .sync-title { font-size:0.8rem; color:var(--sub); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
+    .sync-btns  { display:flex; gap:8px; }
+    .sync-btn {
+      flex:1; padding:12px 4px; border:none; border-radius:12px;
+      font-size:0.8rem; font-weight:700; cursor:pointer; letter-spacing:0.5px;
+      transition:transform 0.1s, opacity 0.15s;
+    }
+    .sync-btn:active { transform:scale(0.96); opacity:0.85; }
+    .sync-btn.sr { background:rgba(239,35,60,0.2);   color:var(--red);    border:1.5px solid rgba(239,35,60,0.4); }
+    .sync-btn.sy { background:rgba(255,209,102,0.2); color:var(--yellow); border:1.5px solid rgba(255,209,102,0.4); }
+    .sync-btn.sg { background:rgba(6,214,160,0.2);   color:var(--green);  border:1.5px solid rgba(6,214,160,0.4); }
+    .sync-info { font-size:0.72rem; color:var(--sub); margin-top:10px; text-align:center; }
+    .sync-info span { color:var(--green); }
+
+    /* SETTINGS */
+    .set-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .set-title  { font-size:1.1rem; font-weight:700; }
+    .set-card   {
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:14px; margin-bottom:12px; overflow:hidden;
+    }
+    .set-head {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:13px 16px; cursor:pointer;
+    }
+    .set-head .sn { font-weight:600; font-size:0.9rem; }
+    .set-head .sa { color:var(--sub); transition:transform 0.2s; font-size:1rem; }
+    .set-head.open .sa { transform:rotate(90deg); }
+    .set-body { display:none; padding:14px 16px; border-top:1px solid var(--border); flex-direction:column; gap:10px; }
+    .set-body.open { display:flex; }
+    .fg label { font-size:0.75rem; color:var(--sub); margin-bottom:4px; display:block; }
+    .fg input[type="number"] {
+      width:100%; background:#111; border:1.5px solid var(--border);
+      color:var(--text); border-radius:10px; padding:10px 12px;
+      font-size:1rem; outline:none;
+    }
+    .fg input:focus { border-color:var(--green); }
+    .photo-up {
+      background:#111; border:1.5px dashed var(--border);
+      border-radius:10px; padding:14px; text-align:center;
+      cursor:pointer; color:var(--sub); font-size:0.82rem;
+    }
+    .photo-up:hover { border-color:var(--green); }
+    .photo-prev { width:100%; height:90px; object-fit:cover; border-radius:8px; margin-top:8px; display:none; }
+    .save-btn {
+      background:var(--green); color:#000; border:none;
+      border-radius:10px; padding:11px; font-size:0.88rem;
+      font-weight:700; cursor:pointer; width:100%;
+    }
+    .save-btn:active { opacity:0.85; }
+    input[type="file"] { display:none; }
 
     .toast {
-      position: fixed;
-      bottom: 30px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #06d6a0;
-      color: #000;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: transform 0.3s;
-      z-index: 999;
+      position:fixed; bottom:28px; left:50%;
+      transform:translateX(-50%) translateY(80px);
+      background:var(--green); color:#000;
+      padding:11px 22px; border-radius:30px;
+      font-weight:700; font-size:0.88rem;
+      transition:transform 0.3s; z-index:999;
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.show { transform:translateX(-50%) translateY(0); }
 
-    input[type="file"] { display: none; }
+    .not-synced-msg {
+      text-align:center; padding:20px; color:var(--sub); font-size:0.85rem;
+    }
+    .not-synced-msg .warn { font-size:2rem; margin-bottom:8px; }
   </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Trafik Işığı Takip</h1>
-  <p>Konum seçin</p>
-  <div class="header-actions">
-    <button class="btn-settings" onclick="showPage('settings')">⚙️</button>
+  <h1>ğŸš¦ Trafik IÅŸÄ±ÄŸÄ± Takip</h1>
+  <p id="header-sub">Konum seÃ§in</p>
+  <div class="header-right">
+    <button class="icon-btn" onclick="showPage('settings')" title="Ayarlar">âš™ï¸</button>
   </div>
 </div>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div class="page active" id="page-home">
-  <div class="location-grid" id="location-grid"></div>
+  <p class="home-subtitle">IÅŸÄ±ÄŸa yaklaÅŸmadan Ã¶nce durumunu kontrol edin</p>
+  <div id="loc-list"></div>
 </div>
 
-<!-- DETAIL PAGE -->
+<!-- DETAIL -->
 <div class="page" id="page-detail">
-  <div class="detail-header">
-    <button class="btn-back" onclick="backToHome()">←</button>
-    <div class="detail-title" id="detail-title"></div>
+  <div class="back-row">
+    <button class="back-btn" onclick="goHome()">â†</button>
+    <div class="detail-name" id="d-name"></div>
   </div>
-  <div id="detail-photo-area"></div>
-  <div class="traffic-light-container">
-    <div class="traffic-light">
-      <div class="light red-light"    id="light-red"></div>
-      <div class="light yellow-light" id="light-yellow"></div>
-      <div class="light green-light"  id="light-green"></div>
+  <div id="d-photo"></div>
+  <div class="tl-wrap">
+    <div class="tl-body">
+      <div class="tl-light r-off" id="tl-r"></div>
+      <div class="tl-light y-off" id="tl-y"></div>
+      <div class="tl-light g-off" id="tl-g"></div>
     </div>
   </div>
-  <div class="timer-card">
-    <div class="timer-phase" id="timer-phase">HAZIR</div>
-    <div class="timer-display" id="timer-display">--</div>
-    <div class="timer-bar-wrap">
-      <div class="timer-bar" id="timer-bar" style="width:0%"></div>
-    </div>
-    <div class="phase-info">
-      <div class="phase-chip">
-        <div class="chip-label">Kırmızı</div>
-        <div class="chip-val" id="chip-red" style="color:var(--red)">-</div>
-      </div>
-      <div class="phase-chip">
-        <div class="chip-label">Sarı</div>
-        <div class="chip-val" id="chip-yellow" style="color:var(--yellow)">-</div>
-      </div>
-      <div class="phase-chip">
-        <div class="chip-label">Yeşil</div>
-        <div class="chip-val" id="chip-green" style="color:var(--green)">-</div>
-      </div>
+  <div class="main-card">
+    <div class="phase-label" id="d-phase-label">SENKRONÄ°ZE EDÄ°LMEDÄ°</div>
+    <div class="big-timer nc" id="d-timer">--</div>
+    <div class="prog-wrap"><div class="prog-bar" id="d-prog" style="width:0%"></div></div>
+    <div class="green-eta" id="d-eta"></div>
+    <div class="chips">
+      <div class="chip"><div class="cl">KÄ±rmÄ±zÄ±</div><div class="cv" style="color:var(--red)"   id="chip-r">-</div></div>
+      <div class="chip"><div class="cl">SarÄ±</div>   <div class="cv" style="color:var(--yellow)" id="chip-y">-</div></div>
+      <div class="chip"><div class="cl">YeÅŸil</div>  <div class="cv" style="color:var(--green)"  id="chip-g">-</div></div>
     </div>
   </div>
-  <button class="btn-control btn-start" id="btn-start" onclick="startTimer()">BAŞLAT</button>
-  <button class="btn-control btn-stop"  id="btn-stop"  onclick="stopTimer()" style="display:none">DURDUR</button>
-  <button class="btn-control btn-reset" onclick="resetTimer()">SIFIRLA</button>
+  <div class="sync-card">
+    <div class="sync-title">âš¡ IÅŸÄ±ÄŸÄ± Senkronize Et</div>
+    <div class="sync-btns">
+      <button class="sync-btn sr" onclick="syncNow('red')">ğŸ”´ KÄ±rmÄ±zÄ±ya<br>GeÃ§ti</button>
+      <button class="sync-btn sy" onclick="syncNow('yellow')">ğŸŸ¡ SarÄ±ya<br>GeÃ§ti</button>
+      <button class="sync-btn sg" onclick="syncNow('green')">ğŸŸ¢ YeÅŸile<br>GeÃ§ti</button>
+    </div>
+    <div class="sync-info" id="sync-info">IÅŸÄ±ÄŸÄ±n hangi renge geÃ§tiÄŸini gÃ¶rdÃ¼ÄŸÃ¼nÃ¼zde ilgili butona basÄ±n.</div>
+  </div>
 </div>
 
-<!-- SETTINGS PAGE -->
+<!-- SETTINGS -->
 <div class="page" id="page-settings">
-  <div class="detail-header">
-    <button class="btn-back" onclick="showPage('home')">←</button>
-    <div class="detail-title">Ayarlar</div>
+  <div class="set-header">
+    <button class="back-btn" onclick="showPage('home')">â†</button>
+    <div class="set-title">Ayarlar</div>
   </div>
-  <div class="settings-title">Konum Süreleri &amp; Fotoğraflar</div>
-  <div id="settings-list"></div>
+  <div id="set-list"></div>
 </div>
 
-<div class="toast" id="toast">Kaydedildi!</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const DEFAULT_LOCATIONS = [
-  { id: 'baglar',       name: 'Bağlar',       red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'byoncali1',    name: 'B.Yoncalı 1',  red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'yenikoy1',     name: 'Yeniköy 1',    red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'yenikoy2',     name: 'Yeniköy 2',    red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'yenikoy3',     name: 'Yeniköy 3',    red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'kapakli',      name: 'Kapaklı Camii',red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'cerkez1',      name: 'Çerkez 1',     red: 60, yellow: 3, green: 45, photo: null },
-  { id: 'cerkez2',      name: 'Çerkez 2',     red: 60, yellow: 3, green: 45, photo: null },
+const DEFAULTS = [
+  {id:'baglar',    name:'BaÄŸlar',        red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'byoncali1', name:'B.YoncalÄ± 1',   red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy1',  name:'YenikÃ¶y 1',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy2',  name:'YenikÃ¶y 2',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy3',  name:'YenikÃ¶y 3',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'kapakli',   name:'KapaklÄ± Camii', red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'cerkez1',   name:'Ã‡erkez 1',      red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'cerkez2',   name:'Ã‡erkez 2',      red:60, yellow:3, green:45, photo:null, sync:null},
 ];
 
-function loadLocations() {
-  const saved = localStorage.getItem('trafikLocations');
-  if (saved) return JSON.parse(saved);
-  return DEFAULT_LOCATIONS.map(l => ({...l}));
+function load() {
+  const s = localStorage.getItem('trafik2');
+  if (s) {
+    const saved = JSON.parse(s);
+    return DEFAULTS.map(d => Object.assign({}, d, saved.find(x => x.id === d.id) || {}));
+  }
+  return DEFAULTS.map(d => ({...d}));
 }
-function saveLocations(locs) {
-  localStorage.setItem('trafikLocations', JSON.stringify(locs));
-}
+function save() { localStorage.setItem('trafik2', JSON.stringify(locs)); }
 
-let locations = loadLocations();
-let currentLoc = null;
-let timerInterval = null;
-let currentPhase = 'red';
-let currentSec = 0;
-let totalSec = 0;
-let running = false;
+let locs = load();
+let activeLoc = null;
+let detailInterval = null;
+
+// ===== CYCLE MATH =====
+function cycleOf(loc) { return loc.red + loc.yellow + loc.green; }
+
+// Returns {phase, remaining, greenIn} or null if not synced
+function calcState(loc) {
+  if (!loc.sync) return null;
+  const cycle = cycleOf(loc);
+  const elapsed = Math.floor((Date.now() - loc.sync.time) / 1000);
+  // offset inside cycle at sync point
+  let offset = loc.sync.offset; // seconds into cycle when synced
+  let pos = (offset + elapsed) % cycle;
+  if (pos < 0) pos += cycle;
+
+  let phase, remaining, greenIn;
+
+  if (pos < loc.red) {
+    phase = 'red';
+    remaining = loc.red - pos;
+    greenIn = loc.red - pos + loc.yellow;
+  } else if (pos < loc.red + loc.yellow) {
+    phase = 'yellow';
+    remaining = loc.red + loc.yellow - pos;
+    greenIn = loc.red + loc.yellow - pos;
+  } else {
+    phase = 'green';
+    remaining = cycle - pos;
+    greenIn = 0;
+  }
+  return { phase, remaining, greenIn, pos, cycle };
+}
 
 // ===== HOME =====
 function renderHome() {
-  const grid = document.getElementById('location-grid');
-  grid.innerHTML = '';
-  locations.forEach(loc => {
+  const list = document.getElementById('loc-list');
+  list.innerHTML = '';
+  locs.forEach(loc => {
+    const state = calcState(loc);
     const div = document.createElement('div');
-    div.className = 'location-btn';
+    div.className = 'loc-card ' + (loc.sync ? 'synced' : 'not-synced');
+
+    let iconClass = 'none', iconEmoji = 'ğŸš¦';
+    let badgeClass = 'none', badgeText = 'Senkronize edilmedi';
+    let etaHtml = '<span style="color:var(--sub);font-size:0.72rem">IÅŸÄ±ÄŸa yaklaÅŸÄ±nca senkronize edin</span>';
+
+    if (state) {
+      iconClass  = state.phase;
+      badgeClass = state.phase;
+      badgeText  = state.phase === 'red' ? 'KIRMIZI' : state.phase === 'yellow' ? 'SARI' : 'YEÅÄ°L';
+      if (state.phase === 'green') {
+        etaHtml = `<span style="color:var(--green);font-size:0.72rem">ğŸŸ¢ Åu an yeÅŸil! <b>${state.remaining}sn</b> kaldÄ±</span>`;
+      } else {
+        etaHtml = `<span style="font-size:0.72rem;color:var(--sub)">YeÅŸile: <span style="color:var(--green);font-weight:700">${state.greenIn}sn</span> kaldÄ±</span>`;
+      }
+    }
+
     div.innerHTML = `
-      <div class="loc-icon">🚦</div>
-      <div class="loc-name">${loc.name}</div>
-      <div class="loc-status">
-        <span class="status-dot red"></span>
-        <span style="color:var(--red)">${loc.red}sn</span>
-        &nbsp;
-        <span class="status-dot yellow"></span>
-        <span style="color:var(--yellow)">${loc.yellow}sn</span>
-        &nbsp;
-        <span class="status-dot green"></span>
-        <span style="color:var(--green)">${loc.green}sn</span>
-      </div>`;
+      <div class="loc-light-icon ${iconClass}">${iconEmoji}</div>
+      <div class="loc-info">
+        <div class="loc-name">${loc.name}</div>
+        <div class="loc-phase"><span class="phase-badge ${badgeClass}">${badgeText}</span>${state ? `<span style="font-size:0.75rem;color:var(--sub)">${state.remaining}sn</span>` : ''}</div>
+        <div class="loc-green-info">${etaHtml}</div>
+      </div>
+      <div class="loc-arrow">â€º</div>`;
     div.onclick = () => openDetail(loc.id);
-    grid.appendChild(div);
+    list.appendChild(div);
   });
 }
 
 // ===== DETAIL =====
 function openDetail(id) {
-  currentLoc = locations.find(l => l.id === id);
-  stopTimer();
-  resetTimer();
+  activeLoc = locs.find(l => l.id === id);
+  if (detailInterval) clearInterval(detailInterval);
 
-  document.getElementById('detail-title').textContent = currentLoc.name;
+  document.getElementById('d-name').textContent = activeLoc.name;
+  document.getElementById('chip-r').textContent = activeLoc.red    + 'sn';
+  document.getElementById('chip-y').textContent = activeLoc.yellow + 'sn';
+  document.getElementById('chip-g').textContent = activeLoc.green  + 'sn';
 
-  const photoArea = document.getElementById('detail-photo-area');
-  if (currentLoc.photo) {
-    photoArea.innerHTML = `<div class="location-photo"><img src="${currentLoc.photo}" alt="${currentLoc.name}"></div>`;
+  const ph = document.getElementById('d-photo');
+  if (activeLoc.photo) {
+    ph.innerHTML = `<div class="photo-box"><img src="${activeLoc.photo}"></div>`;
   } else {
-    photoArea.innerHTML = `<div class="location-photo-placeholder"><span>📷</span><span>Fotoğraf henüz eklenmedi</span><span style="font-size:0.75rem">Ayarlardan ekleyebilirsiniz</span></div>`;
+    ph.innerHTML = `<div class="photo-box"><div class="photo-icon">ğŸ“·</div><span>FotoÄŸraf eklenmedi (Ayarlardan ekle)</span></div>`;
   }
 
-  document.getElementById('chip-red').textContent    = currentLoc.red + 'sn';
-  document.getElementById('chip-yellow').textContent = currentLoc.yellow + 'sn';
-  document.getElementById('chip-green').textContent  = currentLoc.green + 'sn';
-
+  updateSyncInfo();
+  updateDetailUI();
+  detailInterval = setInterval(updateDetailUI, 1000);
   showPage('detail');
 }
 
-function backToHome() {
-  stopTimer();
-  showPage('home');
-}
+function updateDetailUI() {
+  if (!activeLoc) return;
+  const state = calcState(activeLoc);
+  const timerEl = document.getElementById('d-timer');
+  const phaseEl = document.getElementById('d-phase-label');
+  const progEl  = document.getElementById('d-prog');
+  const etaEl   = document.getElementById('d-eta');
+  const tlR = document.getElementById('tl-r');
+  const tlY = document.getElementById('tl-y');
+  const tlG = document.getElementById('tl-g');
 
-// ===== TIMER =====
-function setPhaseUI(phase, sec, total) {
-  const display  = document.getElementById('timer-display');
-  const phaseEl  = document.getElementById('timer-phase');
-  const bar      = document.getElementById('timer-bar');
-  const lr = document.getElementById('light-red');
-  const ly = document.getElementById('light-yellow');
-  const lg = document.getElementById('light-green');
+  tlR.className = 'tl-light r-off';
+  tlY.className = 'tl-light y-off';
+  tlG.className = 'tl-light g-off';
+  progEl.className = 'prog-bar';
 
-  lr.classList.remove('on');
-  ly.classList.remove('on');
-  lg.classList.remove('on');
-  display.className = 'timer-display';
-  bar.className = 'timer-bar';
+  if (!state) {
+    timerEl.textContent = '--';
+    timerEl.className   = 'big-timer nc';
+    phaseEl.textContent = 'SENKRONÄ°ZE EDÄ°LMEDÄ°';
+    progEl.style.width  = '0%';
+    etaEl.innerHTML     = '';
+    return;
+  }
 
-  const pct = total > 0 ? ((total - sec) / total * 100) : 0;
-  bar.style.width = pct + '%';
+  timerEl.textContent = state.remaining;
 
-  if (phase === 'red') {
-    lr.classList.add('on');
-    display.classList.add('red-color');
-    bar.classList.add('red-bar');
-    phaseEl.textContent = 'KIRMIZI IŞIK';
-  } else if (phase === 'yellow') {
-    ly.classList.add('on');
-    display.classList.add('yellow-color');
-    bar.classList.add('yellow-bar');
-    phaseEl.textContent = 'SARI IŞIK';
+  if (state.phase === 'red') {
+    tlR.className       = 'tl-light r-on';
+    timerEl.className   = 'big-timer rc';
+    phaseEl.textContent = 'KIRMIZI IÅIK';
+    progEl.classList.add('rb');
+    progEl.style.width  = ((activeLoc.red - state.remaining) / activeLoc.red * 100) + '%';
+    etaEl.innerHTML     = `YeÅŸile geÃ§mesine: <b>${state.greenIn} saniye</b>`;
+  } else if (state.phase === 'yellow') {
+    tlY.className       = 'tl-light y-on';
+    timerEl.className   = 'big-timer yc';
+    phaseEl.textContent = 'SARI IÅIK';
+    progEl.classList.add('yb');
+    progEl.style.width  = ((activeLoc.yellow - state.remaining) / activeLoc.yellow * 100) + '%';
+    etaEl.innerHTML     = `YeÅŸile geÃ§mesine: <b>${state.greenIn} saniye</b>`;
   } else {
-    lg.classList.add('on');
-    display.classList.add('green-color');
-    bar.classList.add('green-bar');
-    phaseEl.textContent = 'YEŞİL IŞIK';
+    tlG.className       = 'tl-light g-on';
+    timerEl.className   = 'big-timer gc';
+    phaseEl.textContent = 'YEÅÄ°L IÅIK ğŸŸ¢';
+    progEl.classList.add('gb');
+    progEl.style.width  = ((activeLoc.green - state.remaining) / activeLoc.green * 100) + '%';
+    etaEl.innerHTML     = `YeÅŸil bitimine: <b>${state.remaining} saniye</b>`;
   }
-  display.textContent = sec;
 }
 
-function startTimer() {
-  if (!currentLoc) return;
-  if (running) return;
-  running = true;
+function syncNow(phase) {
+  if (!activeLoc) return;
+  const cycle = cycleOf(activeLoc);
+  let offset = 0;
+  if (phase === 'red')    offset = 0;
+  if (phase === 'yellow') offset = activeLoc.red;
+  if (phase === 'green')  offset = activeLoc.red + activeLoc.yellow;
 
-  document.getElementById('btn-start').style.display = 'none';
-  document.getElementById('btn-stop').style.display  = 'block';
+  activeLoc.sync = { time: Date.now(), offset };
+  save();
+  updateSyncInfo();
+  updateDetailUI();
+  const labels = {red:'KÄ±rmÄ±zÄ±', yellow:'SarÄ±', green:'YeÅŸil'};
+  showToast(`${labels[phase]} senkronize edildi âœ“`);
+}
 
-  if (currentSec === 0) {
-    currentPhase = 'red';
-    currentSec   = currentLoc.red;
-    totalSec     = currentLoc.red;
+function updateSyncInfo() {
+  const el = document.getElementById('sync-info');
+  if (!activeLoc.sync) {
+    el.innerHTML = 'IÅŸÄ±ÄŸÄ±n hangi renge geÃ§tiÄŸini gÃ¶rdÃ¼ÄŸÃ¼nÃ¼zde ilgili butona basÄ±n.';
+    return;
   }
-
-  setPhaseUI(currentPhase, currentSec, totalSec);
-
-  timerInterval = setInterval(() => {
-    currentSec--;
-    if (currentSec < 0) {
-      if      (currentPhase === 'red')    { currentPhase = 'yellow'; currentSec = currentLoc.yellow; totalSec = currentLoc.yellow; }
-      else if (currentPhase === 'yellow') { currentPhase = 'green';  currentSec = currentLoc.green;  totalSec = currentLoc.green; }
-      else                                { currentPhase = 'red';    currentSec = currentLoc.red;    totalSec = currentLoc.red; }
-    }
-    setPhaseUI(currentPhase, currentSec, totalSec);
-  }, 1000);
+  const d = new Date(activeLoc.sync.time);
+  const t = d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  el.innerHTML = `Son senkronizasyon: <span>${t}</span>`;
 }
 
-function stopTimer() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  running = false;
-  document.getElementById('btn-start').style.display = 'block';
-  document.getElementById('btn-stop').style.display  = 'none';
-}
-
-function resetTimer() {
-  stopTimer();
-  currentPhase = 'red';
-  currentSec   = 0;
-  totalSec     = 0;
-  document.getElementById('timer-display').textContent = '--';
-  document.getElementById('timer-display').className   = 'timer-display';
-  document.getElementById('timer-phase').textContent   = 'HAZIR';
-  document.getElementById('timer-bar').style.width     = '0%';
-  document.getElementById('timer-bar').className       = 'timer-bar';
-  ['light-red','light-yellow','light-green'].forEach(id => document.getElementById(id).classList.remove('on'));
+function goHome() {
+  if (detailInterval) { clearInterval(detailInterval); detailInterval = null; }
+  activeLoc = null;
+  showPage('home');
 }
 
 // ===== SETTINGS =====
 function renderSettings() {
-  const list = document.getElementById('settings-list');
+  const list = document.getElementById('set-list');
   list.innerHTML = '';
-  locations.forEach(loc => {
-    const card = document.createElement('div');
-    card.className = 'settings-card';
-    const headerId = 'sh-' + loc.id;
-    const bodyId   = 'sb-' + loc.id;
-    card.innerHTML = `
-      <div class="settings-card-header" id="${headerId}" onclick="toggleSettingsCard('${loc.id}')">
-        <span class="sname">🚦 ${loc.name}</span>
-        <span class="sarrow">›</span>
+  locs.forEach(loc => {
+    const c = document.createElement('div');
+    c.className = 'set-card';
+    c.innerHTML = `
+      <div class="set-head" id="sh-${loc.id}" onclick="toggleSet('${loc.id}')">
+        <span class="sn">ğŸš¦ ${loc.name}</span><span class="sa">â€º</span>
       </div>
-      <div class="settings-card-body" id="${bodyId}">
-        <div class="form-group">
-          <label>Kırmızı Işık Süresi (saniye)</label>
-          <input type="number" id="inp-red-${loc.id}"    value="${loc.red}"    min="1" max="999" />
-        </div>
-        <div class="form-group">
-          <label>Sarı Işık Süresi (saniye)</label>
-          <input type="number" id="inp-yellow-${loc.id}" value="${loc.yellow}" min="1" max="999" />
-        </div>
-        <div class="form-group">
-          <label>Yeşil Işık Süresi (saniye)</label>
-          <input type="number" id="inp-green-${loc.id}"  value="${loc.green}"  min="1" max="999" />
-        </div>
-        <div class="form-group">
-          <label>Konum Fotoğrafı</label>
-          <div class="photo-upload-area" onclick="document.getElementById('file-${loc.id}').click()">
-            <div class="upload-icon">📷</div>
-            <div>Fotoğraf seç veya değiştir</div>
-            <input type="file" id="file-${loc.id}" accept="image/*" onchange="handlePhoto('${loc.id}', this)" />
+      <div class="set-body" id="sb-${loc.id}">
+        <div class="fg"><label>KÄ±rmÄ±zÄ± SÃ¼re (sn)</label>
+          <input type="number" id="sr-${loc.id}" value="${loc.red}" min="1" max="999"></div>
+        <div class="fg"><label>SarÄ± SÃ¼re (sn)</label>
+          <input type="number" id="sy-${loc.id}" value="${loc.yellow}" min="1" max="999"></div>
+        <div class="fg"><label>YeÅŸil SÃ¼re (sn)</label>
+          <input type="number" id="sg-${loc.id}" value="${loc.green}" min="1" max="999"></div>
+        <div class="fg"><label>Konum FotoÄŸrafÄ±</label>
+          <div class="photo-up" onclick="document.getElementById('pf-${loc.id}').click()">
+            ğŸ“· FotoÄŸraf seÃ§ / deÄŸiÅŸtir
+            <input type="file" id="pf-${loc.id}" accept="image/*" onchange="previewPhoto('${loc.id}',this)">
           </div>
-          <img id="prev-${loc.id}" class="photo-preview" src="${loc.photo || ''}" style="display:${loc.photo ? 'block' : 'none'}" />
+          <img id="pp-${loc.id}" class="photo-prev" src="${loc.photo||''}" style="display:${loc.photo?'block':'none'}">
         </div>
-        <button class="btn-save-loc" onclick="saveLoc('${loc.id}')">Kaydet</button>
+        <button class="save-btn" onclick="saveLoc('${loc.id}')">Kaydet</button>
       </div>`;
-    list.appendChild(card);
+    list.appendChild(c);
   });
 }
 
-function toggleSettingsCard(id) {
-  const header = document.getElementById('sh-' + id);
-  const body   = document.getElementById('sb-' + id);
-  header.classList.toggle('open');
-  body.classList.toggle('open');
+function toggleSet(id) {
+  document.getElementById('sh-'+id).classList.toggle('open');
+  document.getElementById('sb-'+id).classList.toggle('open');
 }
-
-function handlePhoto(id, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prev = document.getElementById('prev-' + id);
-    prev.src   = e.target.result;
-    prev.style.display = 'block';
-    prev.dataset.data  = e.target.result;
+function previewPhoto(id, inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const p = document.getElementById('pp-'+id);
+    p.src = e.target.result; p.style.display='block'; p.dataset.d = e.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 }
-
 function saveLoc(id) {
-  const loc = locations.find(l => l.id === id);
-  loc.red    = parseInt(document.getElementById('inp-red-'    + id).value)    || loc.red;
-  loc.yellow = parseInt(document.getElementById('inp-yellow-' + id).value)    || loc.yellow;
-  loc.green  = parseInt(document.getElementById('inp-green-'  + id).value)    || loc.green;
-  const prev = document.getElementById('prev-' + id);
-  if (prev.dataset.data) loc.photo = prev.dataset.data;
-  saveLocations(locations);
-  showToast('Kaydedildi! ✓');
+  const loc = locs.find(l => l.id === id);
+  const newRed    = parseInt(document.getElementById('sr-'+id).value) || loc.red;
+  const newYellow = parseInt(document.getElementById('sy-'+id).value) || loc.yellow;
+  const newGreen  = parseInt(document.getElementById('sg-'+id).value) || loc.green;
+  const changed   = newRed !== loc.red || newYellow !== loc.yellow || newGreen !== loc.green;
+  loc.red    = newRed;
+  loc.yellow = newYellow;
+  loc.green  = newGreen;
+  if (changed) loc.sync = null; // sÃ¼reler deÄŸiÅŸince sync sÄ±fÄ±rla
+  const pp = document.getElementById('pp-'+id);
+  if (pp.dataset.d) loc.photo = pp.dataset.d;
+  save();
+  showToast('Kaydedildi âœ“' + (changed ? ' (SÃ¼re deÄŸiÅŸti, tekrar senkronize edin)' : ''));
   renderHome();
 }
 
 // ===== PAGES =====
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  if (name === 'home')     renderHome();
-  if (name === 'settings') renderSettings();
+  document.getElementById('page-'+name).classList.add('active');
+  if (name === 'home')     { renderHome(); document.getElementById('header-sub').textContent = 'Konum seÃ§in'; }
+  if (name === 'settings') { renderSettings(); }
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ===== INIT =====
+// Home refresh every second
+setInterval(() => {
+  if (document.getElementById('page-home').classList.contains('active')) renderHome();
+}, 1000);
+
 renderHome();
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
