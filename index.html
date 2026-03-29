@@ -2,8 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Trafik IÅŸÄ±ÄŸÄ± Takip</title>
+  <title>Trafik Isigi Takip</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0f0f1a" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -18,7 +19,6 @@
     }
     body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-    /* HEADER */
     .header {
       background:linear-gradient(135deg,#1a1a2e,#16213e);
       padding:18px 16px 14px;
@@ -28,18 +28,16 @@
     }
     .header h1 { font-size:1.2rem; font-weight:700; letter-spacing:1px; }
     .header p  { font-size:0.72rem; color:var(--sub); margin-top:2px; }
-    .header-right { position:absolute; right:14px; top:50%; transform:translateY(-50%); display:flex; gap:8px; }
+    .header-right { position:absolute; right:14px; top:50%; transform:translateY(-50%); }
     .icon-btn {
       background:var(--border); border:none; color:var(--text);
       width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:1rem;
       display:flex; align-items:center; justify-content:center;
     }
 
-    /* PAGES */
     .page { display:none; padding:16px; }
     .page.active { display:block; }
 
-    /* HOME */
     .home-subtitle { font-size:0.75rem; color:var(--sub); margin-bottom:12px; text-align:center; }
     .loc-card {
       background:var(--card); border:1.5px solid var(--border);
@@ -49,38 +47,28 @@
     }
     .loc-card:active { transform:scale(0.98); }
     .loc-card.synced { border-color:rgba(6,214,160,0.3); }
-    .loc-card.not-synced { border-color:rgba(255,209,102,0.2); }
 
     .loc-light-icon {
       width:44px; height:44px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
       font-size:1.3rem; flex-shrink:0;
     }
-    .loc-light-icon.red    { background:rgba(239,35,60,0.15);  box-shadow:0 0 10px rgba(239,35,60,0.3); }
+    .loc-light-icon.red    { background:rgba(239,35,60,0.15);   box-shadow:0 0 10px rgba(239,35,60,0.3); }
     .loc-light-icon.yellow { background:rgba(255,209,102,0.15); box-shadow:0 0 10px rgba(255,209,102,0.3); }
-    .loc-light-icon.green  { background:rgba(6,214,160,0.15);  box-shadow:0 0 10px rgba(6,214,160,0.3); }
+    .loc-light-icon.green  { background:rgba(6,214,160,0.15);   box-shadow:0 0 10px rgba(6,214,160,0.3); }
     .loc-light-icon.none   { background:rgba(100,100,100,0.15); }
 
     .loc-info { flex:1; min-width:0; }
     .loc-name { font-weight:700; font-size:0.95rem; }
-    .loc-phase {
-      font-size:0.78rem; margin-top:3px;
-      display:flex; align-items:center; gap:6px;
-    }
-    .phase-badge {
-      padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700;
-    }
+    .loc-phase { font-size:0.78rem; margin-top:3px; display:flex; align-items:center; gap:6px; }
+    .phase-badge { padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700; }
     .phase-badge.red    { background:rgba(239,35,60,0.2);   color:var(--red); }
     .phase-badge.yellow { background:rgba(255,209,102,0.2); color:var(--yellow); }
     .phase-badge.green  { background:rgba(6,214,160,0.2);   color:var(--green); }
     .phase-badge.none   { background:rgba(100,100,100,0.2); color:var(--sub); }
-
     .loc-green-info { font-size:0.72rem; color:var(--sub); margin-top:2px; }
-    .loc-green-info span { color:var(--green); font-weight:600; }
-
     .loc-arrow { color:var(--sub); font-size:1.1rem; }
 
-    /* DETAIL */
     .back-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
     .back-btn {
       background:var(--card); border:1.5px solid var(--border);
@@ -97,19 +85,14 @@
       flex-direction:column; gap:6px;
     }
     .photo-box img { width:100%; height:100%; object-fit:cover; }
-    .photo-box .photo-icon { font-size:2rem; }
 
-    /* Big traffic light */
     .tl-wrap { display:flex; justify-content:center; margin-bottom:20px; }
     .tl-body {
       background:#111; border:3px solid #2a2a2a; border-radius:22px;
       padding:14px 18px; display:flex; flex-direction:column; gap:12px;
       box-shadow:0 8px 30px rgba(0,0,0,0.6);
     }
-    .tl-light {
-      width:64px; height:64px; border-radius:50%;
-      transition:box-shadow 0.4s, background 0.4s;
-    }
+    .tl-light { width:64px; height:64px; border-radius:50%; transition:box-shadow 0.4s, background 0.4s; }
     .tl-light.r-off { background:#2a0008; }
     .tl-light.y-off { background:#2a2000; }
     .tl-light.g-off { background:#002a14; }
@@ -117,44 +100,28 @@
     .tl-light.y-on  { background:var(--yellow);  box-shadow:0 0 24px 8px rgba(255,209,102,0.65); }
     .tl-light.g-on  { background:var(--green);   box-shadow:0 0 24px 8px rgba(6,214,160,0.65); }
 
-    /* Main timer card */
     .main-card {
       background:var(--card); border:1.5px solid var(--border);
       border-radius:18px; padding:18px; margin-bottom:14px; text-align:center;
     }
-    .phase-label {
-      font-size:0.72rem; text-transform:uppercase; letter-spacing:2px;
-      color:var(--sub); margin-bottom:6px;
-    }
-    .big-timer {
-      font-size:4rem; font-weight:800; font-variant-numeric:tabular-nums; line-height:1;
-      margin-bottom:6px;
-    }
+    .phase-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:2px; color:var(--sub); margin-bottom:6px; }
+    .big-timer { font-size:4rem; font-weight:800; font-variant-numeric:tabular-nums; line-height:1; margin-bottom:6px; }
     .big-timer.rc { color:var(--red);    text-shadow:0 0 20px rgba(239,35,60,0.4); }
     .big-timer.yc { color:var(--yellow); text-shadow:0 0 20px rgba(255,209,102,0.4); }
     .big-timer.gc { color:var(--green);  text-shadow:0 0 20px rgba(6,214,160,0.4); }
     .big-timer.nc { color:var(--sub); }
-
     .prog-wrap { background:#111; border-radius:8px; height:7px; overflow:hidden; margin-top:10px; }
     .prog-bar  { height:100%; border-radius:8px; transition:width 0.9s linear; }
     .prog-bar.rb { background:linear-gradient(90deg,#800020,var(--red)); }
     .prog-bar.yb { background:linear-gradient(90deg,#806000,var(--yellow)); }
     .prog-bar.gb { background:linear-gradient(90deg,#006040,var(--green)); }
-
-    .green-eta {
-      margin-top:12px; font-size:0.82rem; color:var(--sub);
-    }
+    .green-eta { margin-top:12px; font-size:0.82rem; color:var(--sub); }
     .green-eta b { color:var(--green); font-size:1rem; }
-
     .chips { display:flex; gap:8px; margin-top:12px; }
-    .chip  {
-      flex:1; background:#111; border-radius:12px; padding:8px;
-      text-align:center;
-    }
+    .chip { flex:1; background:#111; border-radius:12px; padding:8px; text-align:center; }
     .chip .cl { font-size:0.6rem; color:var(--sub); text-transform:uppercase; letter-spacing:1px; }
     .chip .cv { font-size:0.95rem; font-weight:700; margin-top:2px; }
 
-    /* SYNC section */
     .sync-card {
       background:var(--card); border:1.5px solid var(--border);
       border-radius:18px; padding:16px; margin-bottom:14px;
@@ -163,7 +130,7 @@
     .sync-btns  { display:flex; gap:8px; }
     .sync-btn {
       flex:1; padding:12px 4px; border:none; border-radius:12px;
-      font-size:0.8rem; font-weight:700; cursor:pointer; letter-spacing:0.5px;
+      font-size:0.8rem; font-weight:700; cursor:pointer;
       transition:transform 0.1s, opacity 0.15s;
     }
     .sync-btn:active { transform:scale(0.96); opacity:0.85; }
@@ -173,17 +140,10 @@
     .sync-info { font-size:0.72rem; color:var(--sub); margin-top:10px; text-align:center; }
     .sync-info span { color:var(--green); }
 
-    /* SETTINGS */
     .set-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
     .set-title  { font-size:1.1rem; font-weight:700; }
-    .set-card   {
-      background:var(--card); border:1.5px solid var(--border);
-      border-radius:14px; margin-bottom:12px; overflow:hidden;
-    }
-    .set-head {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:13px 16px; cursor:pointer;
-    }
+    .set-card   { background:var(--card); border:1.5px solid var(--border); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+    .set-head   { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; }
     .set-head .sn { font-weight:600; font-size:0.9rem; }
     .set-head .sa { color:var(--sub); transition:transform 0.2s; font-size:1rem; }
     .set-head.open .sa { transform:rotate(90deg); }
@@ -192,8 +152,7 @@
     .fg label { font-size:0.75rem; color:var(--sub); margin-bottom:4px; display:block; }
     .fg input[type="number"] {
       width:100%; background:#111; border:1.5px solid var(--border);
-      color:var(--text); border-radius:10px; padding:10px 12px;
-      font-size:1rem; outline:none;
+      color:var(--text); border-radius:10px; padding:10px 12px; font-size:1rem; outline:none;
     }
     .fg input:focus { border-color:var(--green); }
     .photo-up {
@@ -201,14 +160,12 @@
       border-radius:10px; padding:14px; text-align:center;
       cursor:pointer; color:var(--sub); font-size:0.82rem;
     }
-    .photo-up:hover { border-color:var(--green); }
     .photo-prev { width:100%; height:90px; object-fit:cover; border-radius:8px; margin-top:8px; display:none; }
     .save-btn {
       background:var(--green); color:#000; border:none;
       border-radius:10px; padding:11px; font-size:0.88rem;
       font-weight:700; cursor:pointer; width:100%;
     }
-    .save-btn:active { opacity:0.85; }
     input[type="file"] { display:none; }
 
     .toast {
@@ -220,33 +177,28 @@
       transition:transform 0.3s; z-index:999;
     }
     .toast.show { transform:translateX(-50%) translateY(0); }
-
-    .not-synced-msg {
-      text-align:center; padding:20px; color:var(--sub); font-size:0.85rem;
-    }
-    .not-synced-msg .warn { font-size:2rem; margin-bottom:8px; }
   </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>ğŸš¦ Trafik IÅŸÄ±ÄŸÄ± Takip</h1>
-  <p id="header-sub">Konum seÃ§in</p>
+  <h1>&#128678; Trafik Isigi Takip</h1>
+  <p id="header-sub">Konum secin</p>
   <div class="header-right">
-    <button class="icon-btn" onclick="showPage('settings')" title="Ayarlar">âš™ï¸</button>
+    <button class="icon-btn" onclick="showPage('settings')">&#9881;</button>
   </div>
 </div>
 
 <!-- HOME -->
 <div class="page active" id="page-home">
-  <p class="home-subtitle">IÅŸÄ±ÄŸa yaklaÅŸmadan Ã¶nce durumunu kontrol edin</p>
+  <p class="home-subtitle">Isiga yaklasmadan once durumunu kontrol edin</p>
   <div id="loc-list"></div>
 </div>
 
 <!-- DETAIL -->
 <div class="page" id="page-detail">
   <div class="back-row">
-    <button class="back-btn" onclick="goHome()">â†</button>
+    <button class="back-btn" onclick="goHome()">&#8592;</button>
     <div class="detail-name" id="d-name"></div>
   </div>
   <div id="d-photo"></div>
@@ -258,31 +210,31 @@
     </div>
   </div>
   <div class="main-card">
-    <div class="phase-label" id="d-phase-label">SENKRONÄ°ZE EDÄ°LMEDÄ°</div>
+    <div class="phase-label" id="d-phase-label">SENKRONIZE EDILMEDI</div>
     <div class="big-timer nc" id="d-timer">--</div>
     <div class="prog-wrap"><div class="prog-bar" id="d-prog" style="width:0%"></div></div>
     <div class="green-eta" id="d-eta"></div>
     <div class="chips">
-      <div class="chip"><div class="cl">KÄ±rmÄ±zÄ±</div><div class="cv" style="color:var(--red)"   id="chip-r">-</div></div>
-      <div class="chip"><div class="cl">SarÄ±</div>   <div class="cv" style="color:var(--yellow)" id="chip-y">-</div></div>
-      <div class="chip"><div class="cl">YeÅŸil</div>  <div class="cv" style="color:var(--green)"  id="chip-g">-</div></div>
+      <div class="chip"><div class="cl">Kirmizi</div><div class="cv" style="color:var(--red)"   id="chip-r">-</div></div>
+      <div class="chip"><div class="cl">Sari</div>   <div class="cv" style="color:var(--yellow)" id="chip-y">-</div></div>
+      <div class="chip"><div class="cl">Yesil</div>  <div class="cv" style="color:var(--green)"  id="chip-g">-</div></div>
     </div>
   </div>
   <div class="sync-card">
-    <div class="sync-title">âš¡ IÅŸÄ±ÄŸÄ± Senkronize Et</div>
+    <div class="sync-title">&#9889; Isigi Senkronize Et</div>
     <div class="sync-btns">
-      <button class="sync-btn sr" onclick="syncNow('red')">ğŸ”´ KÄ±rmÄ±zÄ±ya<br>GeÃ§ti</button>
-      <button class="sync-btn sy" onclick="syncNow('yellow')">ğŸŸ¡ SarÄ±ya<br>GeÃ§ti</button>
-      <button class="sync-btn sg" onclick="syncNow('green')">ğŸŸ¢ YeÅŸile<br>GeÃ§ti</button>
+      <button class="sync-btn sr" onclick="syncNow('red')">&#128308; Kirmiziya<br>Gecti</button>
+      <button class="sync-btn sy" onclick="syncNow('yellow')">&#128993; Sariya<br>Gecti</button>
+      <button class="sync-btn sg" onclick="syncNow('green')">&#128994; Yesile<br>Gecti</button>
     </div>
-    <div class="sync-info" id="sync-info">IÅŸÄ±ÄŸÄ±n hangi renge geÃ§tiÄŸini gÃ¶rdÃ¼ÄŸÃ¼nÃ¼zde ilgili butona basÄ±n.</div>
+    <div class="sync-info" id="sync-info">Isigin hangi renge gectigini gordugunuzde ilgili butona basin.</div>
   </div>
 </div>
 
 <!-- SETTINGS -->
 <div class="page" id="page-settings">
   <div class="set-header">
-    <button class="back-btn" onclick="showPage('home')">â†</button>
+    <button class="back-btn" onclick="showPage('home')">&#8592;</button>
     <div class="set-title">Ayarlar</div>
   </div>
   <div id="set-list"></div>
@@ -291,116 +243,98 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const DEFAULTS = [
-  {id:'baglar',    name:'BaÄŸlar',        red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'byoncali1', name:'B.YoncalÄ± 1',   red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'yenikoy1',  name:'YenikÃ¶y 1',     red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'yenikoy2',  name:'YenikÃ¶y 2',     red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'yenikoy3',  name:'YenikÃ¶y 3',     red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'kapakli',   name:'KapaklÄ± Camii', red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'cerkez1',   name:'Ã‡erkez 1',      red:60, yellow:3, green:45, photo:null, sync:null},
-  {id:'cerkez2',   name:'Ã‡erkez 2',      red:60, yellow:3, green:45, photo:null, sync:null},
+var LOCS = [
+  {id:'baglar',    name:'Baglar',        red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'byoncali1', name:'B.Yoncali 1',   red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy1',  name:'Yenikoy 1',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy2',  name:'Yenikoy 2',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'yenikoy3',  name:'Yenikoy 3',     red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'kapakli',   name:'Kapakli Camii', red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'cerkez1',   name:'Cerkez 1',      red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'cerkez2',   name:'Cerkez 2',      red:60, yellow:3, green:45, photo:null, sync:null},
 ];
 
-function load() {
-  const s = localStorage.getItem('trafik2');
+function loadLocs() {
+  var s = localStorage.getItem('trafik3');
   if (s) {
-    const saved = JSON.parse(s);
-    return DEFAULTS.map(d => Object.assign({}, d, saved.find(x => x.id === d.id) || {}));
+    var saved = JSON.parse(s);
+    return LOCS.map(function(d) {
+      var found = saved.find(function(x){ return x.id === d.id; });
+      return Object.assign({}, d, found || {});
+    });
   }
-  return DEFAULTS.map(d => ({...d}));
+  return LOCS.map(function(d){ return Object.assign({},d); });
 }
-function save() { localStorage.setItem('trafik2', JSON.stringify(locs)); }
+function saveLocs() { localStorage.setItem('trafik3', JSON.stringify(locs)); }
 
-let locs = load();
-let activeLoc = null;
-let detailInterval = null;
+var locs = loadLocs();
+var activeLoc = null;
+var detailInterval = null;
 
-// ===== CYCLE MATH =====
-function cycleOf(loc) { return loc.red + loc.yellow + loc.green; }
-
-// Returns {phase, remaining, greenIn} or null if not synced
 function calcState(loc) {
   if (!loc.sync) return null;
-  const cycle = cycleOf(loc);
-  const elapsed = Math.floor((Date.now() - loc.sync.time) / 1000);
-  // offset inside cycle at sync point
-  let offset = loc.sync.offset; // seconds into cycle when synced
-  let pos = (offset + elapsed) % cycle;
+  var cycle = loc.red + loc.yellow + loc.green;
+  var elapsed = Math.floor((Date.now() - loc.sync.time) / 1000);
+  var pos = (loc.sync.offset + elapsed) % cycle;
   if (pos < 0) pos += cycle;
-
-  let phase, remaining, greenIn;
-
+  var phase, remaining, greenIn;
   if (pos < loc.red) {
-    phase = 'red';
-    remaining = loc.red - pos;
-    greenIn = loc.red - pos + loc.yellow;
+    phase = 'red'; remaining = loc.red - pos; greenIn = loc.red - pos + loc.yellow;
   } else if (pos < loc.red + loc.yellow) {
-    phase = 'yellow';
-    remaining = loc.red + loc.yellow - pos;
-    greenIn = loc.red + loc.yellow - pos;
+    phase = 'yellow'; remaining = loc.red + loc.yellow - pos; greenIn = remaining;
   } else {
-    phase = 'green';
-    remaining = cycle - pos;
-    greenIn = 0;
+    phase = 'green'; remaining = cycle - pos; greenIn = 0;
   }
-  return { phase, remaining, greenIn, pos, cycle };
+  return { phase:phase, remaining:remaining, greenIn:greenIn };
 }
 
-// ===== HOME =====
 function renderHome() {
-  const list = document.getElementById('loc-list');
+  var list = document.getElementById('loc-list');
   list.innerHTML = '';
-  locs.forEach(loc => {
-    const state = calcState(loc);
-    const div = document.createElement('div');
-    div.className = 'loc-card ' + (loc.sync ? 'synced' : 'not-synced');
-
-    let iconClass = 'none', iconEmoji = 'ğŸš¦';
-    let badgeClass = 'none', badgeText = 'Senkronize edilmedi';
-    let etaHtml = '<span style="color:var(--sub);font-size:0.72rem">IÅŸÄ±ÄŸa yaklaÅŸÄ±nca senkronize edin</span>';
-
+  locs.forEach(function(loc) {
+    var state = calcState(loc);
+    var div = document.createElement('div');
+    div.className = 'loc-card ' + (loc.sync ? 'synced' : '');
+    var iconClass = 'none', badgeClass = 'none', badgeText = 'Senkronize edilmedi';
+    var etaHtml = '<span style="color:var(--sub);font-size:0.72rem">Isiga yaklasmadan once senkronize edin</span>';
+    var secText = '';
     if (state) {
-      iconClass  = state.phase;
-      badgeClass = state.phase;
-      badgeText  = state.phase === 'red' ? 'KIRMIZI' : state.phase === 'yellow' ? 'SARI' : 'YEÅÄ°L';
+      iconClass = badgeClass = state.phase;
+      badgeText = state.phase === 'red' ? 'KIRMIZI' : state.phase === 'yellow' ? 'SARI' : 'YESIL';
+      secText = state.remaining + 'sn';
       if (state.phase === 'green') {
-        etaHtml = `<span style="color:var(--green);font-size:0.72rem">ğŸŸ¢ Åu an yeÅŸil! <b>${state.remaining}sn</b> kaldÄ±</span>`;
+        etaHtml = '<span style="color:var(--green);font-size:0.72rem">Yesil! <b>' + state.remaining + 'sn</b> kaldi</span>';
       } else {
-        etaHtml = `<span style="font-size:0.72rem;color:var(--sub)">YeÅŸile: <span style="color:var(--green);font-weight:700">${state.greenIn}sn</span> kaldÄ±</span>`;
+        etaHtml = '<span style="font-size:0.72rem;color:var(--sub)">Yesile: <span style="color:var(--green);font-weight:700">' + state.greenIn + 'sn</span> kaldi</span>';
       }
     }
-
-    div.innerHTML = `
-      <div class="loc-light-icon ${iconClass}">${iconEmoji}</div>
-      <div class="loc-info">
-        <div class="loc-name">${loc.name}</div>
-        <div class="loc-phase"><span class="phase-badge ${badgeClass}">${badgeText}</span>${state ? `<span style="font-size:0.75rem;color:var(--sub)">${state.remaining}sn</span>` : ''}</div>
-        <div class="loc-green-info">${etaHtml}</div>
-      </div>
-      <div class="loc-arrow">â€º</div>`;
-    div.onclick = () => openDetail(loc.id);
+    div.innerHTML =
+      '<div class="loc-light-icon ' + iconClass + '">&#128678;</div>' +
+      '<div class="loc-info">' +
+        '<div class="loc-name">' + loc.name + '</div>' +
+        '<div class="loc-phase"><span class="phase-badge ' + badgeClass + '">' + badgeText + '</span>' +
+        (state ? '<span style="font-size:0.75rem;color:var(--sub)">' + secText + '</span>' : '') + '</div>' +
+        '<div class="loc-green-info">' + etaHtml + '</div>' +
+      '</div>' +
+      '<div class="loc-arrow">&#8250;</div>';
+    div.onclick = (function(id){ return function(){ openDetail(id); }; })(loc.id);
     list.appendChild(div);
   });
 }
 
-// ===== DETAIL =====
 function openDetail(id) {
-  activeLoc = locs.find(l => l.id === id);
+  activeLoc = locs.find(function(l){ return l.id === id; });
   if (detailInterval) clearInterval(detailInterval);
-
   document.getElementById('d-name').textContent = activeLoc.name;
   document.getElementById('chip-r').textContent = activeLoc.red    + 'sn';
   document.getElementById('chip-y').textContent = activeLoc.yellow + 'sn';
   document.getElementById('chip-g').textContent = activeLoc.green  + 'sn';
-
-  const ph = document.getElementById('d-photo');
+  var ph = document.getElementById('d-photo');
   if (activeLoc.photo) {
-    ph.innerHTML = `<div class="photo-box"><img src="${activeLoc.photo}"></div>`;
+    ph.innerHTML = '<div class="photo-box"><img src="' + activeLoc.photo + '"></div>';
   } else {
-    ph.innerHTML = `<div class="photo-box"><div class="photo-icon">ğŸ“·</div><span>FotoÄŸraf eklenmedi (Ayarlardan ekle)</span></div>`;
+    ph.innerHTML = '<div class="photo-box"><span style="font-size:2rem">&#128247;</span><span>Fotograf eklenmedi (Ayarlardan ekle)</span></div>';
   }
-
   updateSyncInfo();
   updateDetailUI();
   detailInterval = setInterval(updateDetailUI, 1000);
@@ -409,115 +343,93 @@ function openDetail(id) {
 
 function updateDetailUI() {
   if (!activeLoc) return;
-  const state = calcState(activeLoc);
-  const timerEl = document.getElementById('d-timer');
-  const phaseEl = document.getElementById('d-phase-label');
-  const progEl  = document.getElementById('d-prog');
-  const etaEl   = document.getElementById('d-eta');
-  const tlR = document.getElementById('tl-r');
-  const tlY = document.getElementById('tl-y');
-  const tlG = document.getElementById('tl-g');
-
+  var state = calcState(activeLoc);
+  var timerEl = document.getElementById('d-timer');
+  var phaseEl = document.getElementById('d-phase-label');
+  var progEl  = document.getElementById('d-prog');
+  var etaEl   = document.getElementById('d-eta');
+  var tlR = document.getElementById('tl-r');
+  var tlY = document.getElementById('tl-y');
+  var tlG = document.getElementById('tl-g');
   tlR.className = 'tl-light r-off';
   tlY.className = 'tl-light y-off';
   tlG.className = 'tl-light g-off';
   progEl.className = 'prog-bar';
-
   if (!state) {
-    timerEl.textContent = '--';
-    timerEl.className   = 'big-timer nc';
-    phaseEl.textContent = 'SENKRONÄ°ZE EDÄ°LMEDÄ°';
-    progEl.style.width  = '0%';
-    etaEl.innerHTML     = '';
-    return;
+    timerEl.textContent = '--'; timerEl.className = 'big-timer nc';
+    phaseEl.textContent = 'SENKRONIZE EDILMEDI';
+    progEl.style.width = '0%'; etaEl.innerHTML = ''; return;
   }
-
   timerEl.textContent = state.remaining;
-
   if (state.phase === 'red') {
-    tlR.className       = 'tl-light r-on';
-    timerEl.className   = 'big-timer rc';
-    phaseEl.textContent = 'KIRMIZI IÅIK';
+    tlR.className = 'tl-light r-on'; timerEl.className = 'big-timer rc';
+    phaseEl.textContent = 'KIRMIZI ISIK';
     progEl.classList.add('rb');
-    progEl.style.width  = ((activeLoc.red - state.remaining) / activeLoc.red * 100) + '%';
-    etaEl.innerHTML     = `YeÅŸile geÃ§mesine: <b>${state.greenIn} saniye</b>`;
+    progEl.style.width = ((activeLoc.red - state.remaining) / activeLoc.red * 100) + '%';
+    etaEl.innerHTML = 'Yesile gecmesine: <b>' + state.greenIn + ' saniye</b>';
   } else if (state.phase === 'yellow') {
-    tlY.className       = 'tl-light y-on';
-    timerEl.className   = 'big-timer yc';
-    phaseEl.textContent = 'SARI IÅIK';
+    tlY.className = 'tl-light y-on'; timerEl.className = 'big-timer yc';
+    phaseEl.textContent = 'SARI ISIK';
     progEl.classList.add('yb');
-    progEl.style.width  = ((activeLoc.yellow - state.remaining) / activeLoc.yellow * 100) + '%';
-    etaEl.innerHTML     = `YeÅŸile geÃ§mesine: <b>${state.greenIn} saniye</b>`;
+    progEl.style.width = ((activeLoc.yellow - state.remaining) / activeLoc.yellow * 100) + '%';
+    etaEl.innerHTML = 'Yesile gecmesine: <b>' + state.greenIn + ' saniye</b>';
   } else {
-    tlG.className       = 'tl-light g-on';
-    timerEl.className   = 'big-timer gc';
-    phaseEl.textContent = 'YEÅÄ°L IÅIK ğŸŸ¢';
+    tlG.className = 'tl-light g-on'; timerEl.className = 'big-timer gc';
+    phaseEl.textContent = 'YESIL ISIK';
     progEl.classList.add('gb');
-    progEl.style.width  = ((activeLoc.green - state.remaining) / activeLoc.green * 100) + '%';
-    etaEl.innerHTML     = `YeÅŸil bitimine: <b>${state.remaining} saniye</b>`;
+    progEl.style.width = ((activeLoc.green - state.remaining) / activeLoc.green * 100) + '%';
+    etaEl.innerHTML = 'Yesil bitimine: <b>' + state.remaining + ' saniye</b>';
   }
 }
 
 function syncNow(phase) {
   if (!activeLoc) return;
-  const cycle = cycleOf(activeLoc);
-  let offset = 0;
-  if (phase === 'red')    offset = 0;
-  if (phase === 'yellow') offset = activeLoc.red;
-  if (phase === 'green')  offset = activeLoc.red + activeLoc.yellow;
-
-  activeLoc.sync = { time: Date.now(), offset };
-  save();
+  var offset = phase === 'red' ? 0 : phase === 'yellow' ? activeLoc.red : activeLoc.red + activeLoc.yellow;
+  activeLoc.sync = { time: Date.now(), offset: offset };
+  saveLocs();
   updateSyncInfo();
   updateDetailUI();
-  const labels = {red:'KÄ±rmÄ±zÄ±', yellow:'SarÄ±', green:'YeÅŸil'};
-  showToast(`${labels[phase]} senkronize edildi âœ“`);
+  var labels = {red:'Kirmizi', yellow:'Sari', green:'Yesil'};
+  showToast(labels[phase] + ' senkronize edildi!');
 }
 
 function updateSyncInfo() {
-  const el = document.getElementById('sync-info');
+  var el = document.getElementById('sync-info');
   if (!activeLoc.sync) {
-    el.innerHTML = 'IÅŸÄ±ÄŸÄ±n hangi renge geÃ§tiÄŸini gÃ¶rdÃ¼ÄŸÃ¼nÃ¼zde ilgili butona basÄ±n.';
-    return;
+    el.innerHTML = 'Isigin hangi renge gectigini gordugunuzde ilgili butona basin.'; return;
   }
-  const d = new Date(activeLoc.sync.time);
-  const t = d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-  el.innerHTML = `Son senkronizasyon: <span>${t}</span>`;
+  var d = new Date(activeLoc.sync.time);
+  var t = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0') + ':' + d.getSeconds().toString().padStart(2,'0');
+  el.innerHTML = 'Son senkronizasyon: <span>' + t + '</span>';
 }
 
 function goHome() {
   if (detailInterval) { clearInterval(detailInterval); detailInterval = null; }
-  activeLoc = null;
-  showPage('home');
+  activeLoc = null; showPage('home');
 }
 
-// ===== SETTINGS =====
 function renderSettings() {
-  const list = document.getElementById('set-list');
+  var list = document.getElementById('set-list');
   list.innerHTML = '';
-  locs.forEach(loc => {
-    const c = document.createElement('div');
+  locs.forEach(function(loc) {
+    var c = document.createElement('div');
     c.className = 'set-card';
-    c.innerHTML = `
-      <div class="set-head" id="sh-${loc.id}" onclick="toggleSet('${loc.id}')">
-        <span class="sn">ğŸš¦ ${loc.name}</span><span class="sa">â€º</span>
-      </div>
-      <div class="set-body" id="sb-${loc.id}">
-        <div class="fg"><label>KÄ±rmÄ±zÄ± SÃ¼re (sn)</label>
-          <input type="number" id="sr-${loc.id}" value="${loc.red}" min="1" max="999"></div>
-        <div class="fg"><label>SarÄ± SÃ¼re (sn)</label>
-          <input type="number" id="sy-${loc.id}" value="${loc.yellow}" min="1" max="999"></div>
-        <div class="fg"><label>YeÅŸil SÃ¼re (sn)</label>
-          <input type="number" id="sg-${loc.id}" value="${loc.green}" min="1" max="999"></div>
-        <div class="fg"><label>Konum FotoÄŸrafÄ±</label>
-          <div class="photo-up" onclick="document.getElementById('pf-${loc.id}').click()">
-            ğŸ“· FotoÄŸraf seÃ§ / deÄŸiÅŸtir
-            <input type="file" id="pf-${loc.id}" accept="image/*" onchange="previewPhoto('${loc.id}',this)">
-          </div>
-          <img id="pp-${loc.id}" class="photo-prev" src="${loc.photo||''}" style="display:${loc.photo?'block':'none'}">
-        </div>
-        <button class="save-btn" onclick="saveLoc('${loc.id}')">Kaydet</button>
-      </div>`;
+    c.innerHTML =
+      '<div class="set-head" id="sh-' + loc.id + '" onclick="toggleSet(\'' + loc.id + '\')">' +
+        '<span class="sn">&#128678; ' + loc.name + '</span><span class="sa">&#8250;</span>' +
+      '</div>' +
+      '<div class="set-body" id="sb-' + loc.id + '">' +
+        '<div class="fg"><label>Kirmizi Sure (sn)</label><input type="number" id="sr-' + loc.id + '" value="' + loc.red    + '" min="1" max="999"></div>' +
+        '<div class="fg"><label>Sari Sure (sn)</label>   <input type="number" id="sy-' + loc.id + '" value="' + loc.yellow + '" min="1" max="999"></div>' +
+        '<div class="fg"><label>Yesil Sure (sn)</label>  <input type="number" id="sg-' + loc.id + '" value="' + loc.green  + '" min="1" max="999"></div>' +
+        '<div class="fg"><label>Konum Fotografi</label>' +
+          '<div class="photo-up" onclick="document.getElementById(\'pf-' + loc.id + '\').click()">&#128247; Fotograf sec / degistir' +
+            '<input type="file" id="pf-' + loc.id + '" accept="image/*" onchange="previewPhoto(\'' + loc.id + '\',this)">' +
+          '</div>' +
+          '<img id="pp-' + loc.id + '" class="photo-prev" src="' + (loc.photo||'') + '" style="display:' + (loc.photo?'block':'none') + '">' +
+        '</div>' +
+        '<button class="save-btn" onclick="saveLocSettings(\'' + loc.id + '\')">Kaydet</button>' +
+      '</div>';
     list.appendChild(c);
   });
 }
@@ -526,53 +438,51 @@ function toggleSet(id) {
   document.getElementById('sh-'+id).classList.toggle('open');
   document.getElementById('sb-'+id).classList.toggle('open');
 }
+
 function previewPhoto(id, inp) {
-  const f = inp.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    const p = document.getElementById('pp-'+id);
+  var f = inp.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    var p = document.getElementById('pp-'+id);
     p.src = e.target.result; p.style.display='block'; p.dataset.d = e.target.result;
   };
   r.readAsDataURL(f);
 }
-function saveLoc(id) {
-  const loc = locs.find(l => l.id === id);
-  const newRed    = parseInt(document.getElementById('sr-'+id).value) || loc.red;
-  const newYellow = parseInt(document.getElementById('sy-'+id).value) || loc.yellow;
-  const newGreen  = parseInt(document.getElementById('sg-'+id).value) || loc.green;
-  const changed   = newRed !== loc.red || newYellow !== loc.yellow || newGreen !== loc.green;
-  loc.red    = newRed;
-  loc.yellow = newYellow;
-  loc.green  = newGreen;
-  if (changed) loc.sync = null; // sÃ¼reler deÄŸiÅŸince sync sÄ±fÄ±rla
-  const pp = document.getElementById('pp-'+id);
+
+function saveLocSettings(id) {
+  var loc = locs.find(function(l){ return l.id === id; });
+  var nr = parseInt(document.getElementById('sr-'+id).value) || loc.red;
+  var ny = parseInt(document.getElementById('sy-'+id).value) || loc.yellow;
+  var ng = parseInt(document.getElementById('sg-'+id).value) || loc.green;
+  var changed = nr !== loc.red || ny !== loc.yellow || ng !== loc.green;
+  loc.red = nr; loc.yellow = ny; loc.green = ng;
+  if (changed) loc.sync = null;
+  var pp = document.getElementById('pp-'+id);
   if (pp.dataset.d) loc.photo = pp.dataset.d;
-  save();
-  showToast('Kaydedildi âœ“' + (changed ? ' (SÃ¼re deÄŸiÅŸti, tekrar senkronize edin)' : ''));
+  saveLocs();
+  showToast('Kaydedildi!' + (changed ? ' Tekrar senkronize edin.' : ''));
   renderHome();
 }
 
-// ===== PAGES =====
 function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById('page-'+name).classList.add('active');
-  if (name === 'home')     { renderHome(); document.getElementById('header-sub').textContent = 'Konum seÃ§in'; }
-  if (name === 'settings') { renderSettings(); }
+  if (name === 'home') renderHome();
+  if (name === 'settings') renderSettings();
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
 }
 
-// Home refresh every second
-setInterval(() => {
+setInterval(function(){
   if (document.getElementById('page-home').classList.contains('active')) renderHome();
 }, 1000);
 
 renderHome();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
 </script>
 </body>
 </html>
