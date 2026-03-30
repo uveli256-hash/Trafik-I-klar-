@@ -77,28 +77,35 @@
     }
     .detail-name { font-size:1.2rem; font-weight:700; }
 
-    .photo-box {
-      width:100%; height:220px; border-radius:14px; overflow:hidden;
+    .photo-wrap {
+      width:100%; height:240px; border-radius:16px; overflow:hidden;
+      position:relative; margin-bottom:18px;
       background:var(--card); border:1.5px solid var(--border);
-      display:flex; align-items:center; justify-content:center;
-      color:var(--sub); font-size:0.8rem; margin-bottom:18px;
-      flex-direction:column; gap:6px;
     }
-    .photo-box img { width:100%; height:100%; object-fit:cover; }
+    .photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .photo-placeholder {
+      width:100%; height:100%; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:6px;
+      color:var(--sub); font-size:0.8rem;
+    }
+    .photo-placeholder span { font-size:2rem; }
 
-    .tl-wrap { display:flex; justify-content:center; margin-bottom:20px; }
-    .tl-body {
-      background:#111; border:3px solid #2a2a2a; border-radius:22px;
-      padding:14px 18px; display:flex; flex-direction:column; gap:12px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    .tl-overlay {
+      position:absolute; right:14px; top:50%; transform:translateY(-50%);
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(4px);
+      border:2px solid rgba(255,255,255,0.1);
+      border-radius:18px;
+      padding:10px 12px;
+      display:flex; flex-direction:column; gap:10px;
     }
-    .tl-light { width:64px; height:64px; border-radius:50%; transition:box-shadow 0.4s, background 0.4s; }
-    .tl-light.r-off { background:#2a0008; }
-    .tl-light.y-off { background:#2a2000; }
-    .tl-light.g-off { background:#002a14; }
-    .tl-light.r-on  { background:var(--red);    box-shadow:0 0 24px 8px rgba(239,35,60,0.65); }
-    .tl-light.y-on  { background:var(--yellow);  box-shadow:0 0 24px 8px rgba(255,209,102,0.65); }
-    .tl-light.g-on  { background:var(--green);   box-shadow:0 0 24px 8px rgba(6,214,160,0.65); }
+    .tl-light { width:44px; height:44px; border-radius:50%; transition:box-shadow 0.4s, background 0.4s; }
+    .tl-light.r-off { background:rgba(80,0,20,0.5); }
+    .tl-light.y-off { background:rgba(80,60,0,0.5); }
+    .tl-light.g-off { background:rgba(0,80,40,0.5); }
+    .tl-light.r-on  { background:var(--red);    box-shadow:0 0 18px 6px rgba(239,35,60,0.8); }
+    .tl-light.y-on  { background:var(--yellow);  box-shadow:0 0 18px 6px rgba(255,209,102,0.8); }
+    .tl-light.g-on  { background:var(--green);   box-shadow:0 0 18px 6px rgba(6,214,160,0.8); }
 
     .main-card {
       background:var(--card); border:1.5px solid var(--border);
@@ -202,13 +209,6 @@
     <div class="detail-name" id="d-name"></div>
   </div>
   <div id="d-photo"></div>
-  <div class="tl-wrap">
-    <div class="tl-body">
-      <div class="tl-light r-off" id="tl-r"></div>
-      <div class="tl-light y-off" id="tl-y"></div>
-      <div class="tl-light g-off" id="tl-g"></div>
-    </div>
-  </div>
   <div class="main-card">
     <div class="phase-label" id="d-phase-label">SENKRONIZE EDILMEDI</div>
     <div class="big-timer nc" id="d-timer">--</div>
@@ -331,10 +331,11 @@ function openDetail(id) {
   document.getElementById('chip-y').textContent = activeLoc.yellow + 'sn';
   document.getElementById('chip-g').textContent = activeLoc.green  + 'sn';
   var ph = document.getElementById('d-photo');
+  var tlHtml = '<div class="tl-overlay"><div class="tl-light r-off" id="tl-r"></div><div class="tl-light y-off" id="tl-y"></div><div class="tl-light g-off" id="tl-g"></div></div>';
   if (activeLoc.photo) {
-    ph.innerHTML = '<div class="photo-box"><img src="' + activeLoc.photo + '"></div>';
+    ph.innerHTML = '<div class="photo-wrap"><img src="' + activeLoc.photo + '">' + tlHtml + '</div>';
   } else {
-    ph.innerHTML = '<div class="photo-box"><span style="font-size:2rem">&#128247;</span><span>Fotograf eklenmedi (Ayarlardan ekle)</span></div>';
+    ph.innerHTML = '<div class="photo-wrap"><div class="photo-placeholder"><span>&#128247;</span><span>Fotograf eklenmedi</span></div>' + tlHtml + '</div>';
   }
   updateSyncInfo();
   updateDetailUI();
