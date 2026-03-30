@@ -246,6 +246,7 @@
 var LOCS = [
   {id:'baglar',    name:'Baglar',        red:60, yellow:3, green:45, photo:null, sync:null},
   {id:'byoncali1', name:'B.Yoncali 1',   red:60, yellow:3, green:45, photo:null, sync:null},
+  {id:'byoncali2', name:'B.Yoncali 2',   red:60, yellow:3, green:45, photo:null, sync:null},
   {id:'yenikoy1',  name:'Yenikoy 1',     red:60, yellow:3, green:45, photo:null, sync:null},
   {id:'yenikoy2',  name:'Yenikoy 2',     red:60, yellow:3, green:45, photo:null, sync:null},
   {id:'yenikoy3',  name:'Yenikoy 3',     red:60, yellow:3, green:45, photo:null, sync:null},
@@ -384,13 +385,41 @@ function updateDetailUI() {
 
 function syncNow(phase) {
   if (!activeLoc) return;
+  var now = Date.now();
+  var labels = {red:'Kirmizi', yellow:'Sari', green:'Yesil'};
+
+  // Otomatik sure hesaplama
+  if (activeLoc.lastPress) {
+    var prev = activeLoc.lastPress;
+    var elapsed = Math.round((now - prev.time) / 1000);
+    var nextPhase = {red:'yellow', yellow:'green', green:'red'};
+    // Sadece dogru siradadysa sure guncelle
+    if (nextPhase[prev.phase] === phase && elapsed > 1 && elapsed < 600) {
+      if (prev.phase === 'red')    { activeLoc.red    = elapsed; }
+      if (prev.phase === 'yellow') { activeLoc.yellow = elapsed; }
+      if (prev.phase === 'green')  { activeLoc.green  = elapsed; }
+      // Ayarlar ekranini guncelle
+      var inp = {red:'sr-', yellow:'sy-', green:'sg-'};
+      var el = document.getElementById(inp[prev.phase] + activeLoc.id);
+      if (el) el.value = elapsed;
+      showToast(labels[prev.phase] + ' suresi: ' + elapsed + 'sn olarak kaydedildi!');
+    }
+  }
+
+  // Son basisi kaydet
+  activeLoc.lastPress = { phase: phase, time: now };
+
+  // Senkronizasyon noktasini ayarla
   var offset = phase === 'red' ? 0 : phase === 'yellow' ? activeLoc.red : activeLoc.red + activeLoc.yellow;
-  activeLoc.sync = { time: Date.now(), offset: offset };
+  activeLoc.sync = { time: now, offset: offset };
   saveLocs();
   updateSyncInfo();
   updateDetailUI();
-  var labels = {red:'Kirmizi', yellow:'Sari', green:'Yesil'};
-  showToast(labels[phase] + ' senkronize edildi!');
+
+  // Chip guncelle
+  document.getElementById('chip-r').textContent = activeLoc.red    + 'sn';
+  document.getElementById('chip-y').textContent = activeLoc.yellow + 'sn';
+  document.getElementById('chip-g').textContent = activeLoc.green  + 'sn';
 }
 
 function updateSyncInfo() {
