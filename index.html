@@ -78,7 +78,7 @@
     .detail-name { font-size:1.2rem; font-weight:700; }
 
     .photo-box {
-      width:100%; height:160px; border-radius:14px; overflow:hidden;
+      width:100%; height:220px; border-radius:14px; overflow:hidden;
       background:var(--card); border:1.5px solid var(--border);
       display:flex; align-items:center; justify-content:center;
       color:var(--sub); font-size:0.8rem; margin-bottom:18px;
@@ -448,6 +448,7 @@ function renderSettings() {
         '<span class="sn">&#128678; ' + loc.name + '</span><span class="sa">&#8250;</span>' +
       '</div>' +
       '<div class="set-body" id="sb-' + loc.id + '">' +
+        '<div class="fg"><label>Konum Adi</label><input type="text" id="sn-' + loc.id + '" value="' + loc.name + '" style="width:100%;background:#111;border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:1rem;outline:none"></div>' +
         '<div class="fg"><label>Kirmizi Sure (sn)</label><input type="number" id="sr-' + loc.id + '" value="' + loc.red    + '" min="1" max="999"></div>' +
         '<div class="fg"><label>Sari Sure (sn)</label>   <input type="number" id="sy-' + loc.id + '" value="' + loc.yellow + '" min="1" max="999"></div>' +
         '<div class="fg"><label>Yesil Sure (sn)</label>  <input type="number" id="sg-' + loc.id + '" value="' + loc.green  + '" min="1" max="999"></div>' +
@@ -480,6 +481,8 @@ function previewPhoto(id, inp) {
 
 function saveLocSettings(id) {
   var loc = locs.find(function(l){ return l.id === id; });
+  var nn = document.getElementById('sn-'+id).value.trim() || loc.name;
+  loc.name = nn;
   var nr = parseInt(document.getElementById('sr-'+id).value) || loc.red;
   var ny = parseInt(document.getElementById('sy-'+id).value) || loc.yellow;
   var ng = parseInt(document.getElementById('sg-'+id).value) || loc.green;
